@@ -1,10 +1,17 @@
-import CreateQuestion from "./Pages/CreateQuestion";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
+import React from "react"
+import { Home } from "./Pages/Home";
 
 function App() {
   return (
-    <div>
-      <CreateQuestion />
-    </div>
+    <Router>
+      <Routes>
+
+        <Route exact path="/" element={<Home />} />
+
+      </Routes>
+    </Router>
+
   );
 }
 
