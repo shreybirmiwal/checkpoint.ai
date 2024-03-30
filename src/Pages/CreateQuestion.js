@@ -16,6 +16,7 @@ function CreateQuestion() {
     const [question, setQuestion] = useState('');
     const [steps, setSteps] = useState([{ step: '', hint: '' }]);
     const [finalAnswer, setFinalAnswer] = useState('');
+    const [id, setId] = useState(0);
 
     const handleQuestionChange = (e) => {
         setQuestion(e.target.value);
@@ -58,6 +59,12 @@ function CreateQuestion() {
             console.log('Question:', question);
             console.log('Steps:', steps);
             console.log('Final Answer:', finalAnswer);
+
+            setFinalAnswer('');
+            setQuestion('');
+            setSteps([{ step: '', hint: '' }]);
+
+            setId(3)
             setPopupOpen(true);
         }
 
@@ -72,24 +79,15 @@ function CreateQuestion() {
 
     return (
         <div className="flex justify-center items-center h-screen">
+
+
             <Dialog open={popupOpen} onClose={handleClosePopup}>
-                <DialogHeader>Its a simple dialog.</DialogHeader>
+                <DialogHeader>Your question has been created!</DialogHeader>
                 <DialogBody>
-                    The key to more success is to have a lot of pillows. Put it this way,
-                    it took me twenty-five years to get these plants, twenty-five years of
-                    blood, sweat, and tears, and I'm never giving up, I'm just
-                    getting started. I'm up to something. Fan luv.
+                    Share this link: http://localhost:3000/{id}
                 </DialogBody>
                 <DialogFooter>
-                    <Button
-                        variant="text"
-                        color="red"
-                        onClick={handleClosePopup}
-                        className="mr-1"
-                    >
-                        <span>Cancel</span>
-                    </Button>
-                    <Button variant="gradient" color="green">
+                    <Button variant="gradient" color="green" onClick={handleClosePopup}>
                         <span>Confirm</span>
                     </Button>
                 </DialogFooter>
