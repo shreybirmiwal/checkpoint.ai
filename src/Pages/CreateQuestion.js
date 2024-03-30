@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 function CreateQuestion() {
     const [question, setQuestion] = useState('');
     const [steps, setSteps] = useState([{ step: '', hint: '' }]);
+    const [finalAnswer, setFinalAnswer] = useState('');
 
     const handleQuestionChange = (e) => {
         setQuestion(e.target.value);
@@ -32,48 +33,75 @@ function CreateQuestion() {
         e.preventDefault();
         console.log('Question:', question);
         console.log('Steps:', steps);
+        console.log('Final Answer:', finalAnswer);
     };
 
     return (
-        <div className="max-w-md mx-auto p-6 bg-white shadow-md rounded-md">
+        <div className="max-w mx-72 mx-auto p-6 bg-white shadow-md rounded-md">
             <h1 className="text-2xl font-bold mb-4">Create Question</h1>
-            <form onSubmit={handleSubmit}>
-                <label className="block mb-2" htmlFor="question">Question:</label>
-                <textarea className="w-full px-3 py-2 border rounded-md focus:outline-none focus:border-blue-500" id="question" value={question} onChange={handleQuestionChange} />
+            <form onSubmit={handleSubmit} className="space-y-4">
+                <div className="overflow-y-auto h-40">
+                    <label className="block" htmlFor="question">Question:</label>
+                    <textarea className="w-full px-3 py-2 border rounded-md focus:outline-none focus:border-blue-500" id="question" value={question} onChange={handleQuestionChange} />
+                </div>
 
-                <h2 className="text-lg font-semibold mt-6 mb-2">Steps:</h2>
+                <h2 className="text-lg font-semibold mb-2">Steps:</h2>
                 {steps.map((step, index) => (
                     <div key={index} className="mb-4">
                         <h3 className="text-md font-medium mb-2">Step {index + 1}</h3>
-                        <label className="block mb-1" htmlFor={`step-${index}`}>Step:</label>
-                        <input
-                            type="text"
-                            className="w-full px-3 py-2 border rounded-md focus:outline-none focus:border-blue-500"
-                            id={`step-${index}`}
-                            name="step"
-                            value={step.step}
-                            onChange={(e) => handleStepChange(index, e)}
-                        />
 
-                        <label className="block mt-2 mb-1" htmlFor={`hint-${index}`}>Hint:</label>
-                        <input
-                            type="text"
-                            className="w-full px-3 py-2 border rounded-md focus:outline-none focus:border-blue-500"
-                            id={`hint-${index}`}
-                            name="hint"
-                            value={step.hint}
-                            onChange={(e) => handleStepChange(index, e)}
-                        />
 
-                        <button type="button" className="text-red-600 mt-2" onClick={() => handleDeleteStep(index)}>
-                            Delete Step
-                        </button>
+                        <div className="grid grid-cols-6 space-x-2">
+
+                            <div className='col-span-2'>
+                                <label className="block mb-1" htmlFor={`step-${index}`}>Step:</label>
+                                <input
+                                    type="text"
+                                    className="w-full px-3 py-2 border rounded-md focus:outline-none focus:border-blue-500"
+                                    id={`step-${index}`}
+                                    name="step"
+                                    value={step.step}
+                                    onChange={(e) => handleStepChange(index, e)}
+                                />
+                            </div>
+
+                            <div className='col-span-2'>
+                                <label className="block mb-1" htmlFor={`hint-${index}`}>Hint:</label>
+                                <input
+                                    type="text"
+                                    className="w-full px-3 py-2 border rounded-md focus:outline-none focus:border-blue-500"
+                                    id={`hint-${index}`}
+                                    name="hint"
+                                    value={step.hint}
+                                    onChange={(e) => handleStepChange(index, e)}
+                                />
+                            </div>
+
+
+                            <button type="button" className="text-blue-500" onClick={handleAddStep}>
+                                Add Step
+                            </button>
+
+                            <button type="button" className="text-red-600" onClick={() => handleDeleteStep(index)}>
+                                Delete Step
+                            </button>
+
+                        </div>
                     </div>
                 ))}
 
-                <button type="button" className="bg-blue-500 text-white px-4 py-2 rounded-md mr-2" onClick={handleAddStep}>
-                    Add Step
-                </button>
+
+
+                <div className="grid-cols-2">
+                    <label className="block mb-2" htmlFor="finalAnswer">Final Answer:</label>
+                    <input
+                        type="text"
+                        className="w-full px-3 py-2 border rounded-md focus:outline-none focus:border-blue-500"
+                        id="finalAnswer"
+                        value={finalAnswer}
+                        onChange={(e) => setFinalAnswer(e.target.value)}
+                    />
+                </div>
 
                 <button type="submit" className="bg-green-500 text-white px-4 py-2 rounded-md">
                     Submit
