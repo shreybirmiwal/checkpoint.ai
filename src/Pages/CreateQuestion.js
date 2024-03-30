@@ -1,6 +1,18 @@
 import React, { useState } from 'react';
 
+import {
+    Button,
+    Dialog,
+    DialogHeader,
+    DialogBody,
+    DialogFooter,
+} from "@material-tailwind/react";
+
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 function CreateQuestion() {
+    const [popupOpen, setPopupOpen] = useState(false);
     const [question, setQuestion] = useState('');
     const [steps, setSteps] = useState([{ step: '', hint: '' }]);
     const [finalAnswer, setFinalAnswer] = useState('');
@@ -31,18 +43,59 @@ function CreateQuestion() {
 
     const handleSubmit = (e) => {
 
+        if (!(question != '' && steps.length > 0 && finalAnswer != '' && steps[0].step != '' && steps[0].hint != '')) {
+            toast.error('Please fill all fields!', {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "dark",
+            });
+        } else {
+            console.log('Question:', question);
+            console.log('Steps:', steps);
+            console.log('Final Answer:', finalAnswer);
+            setPopupOpen(true);
+        }
 
-        console.log('Question:', question);
-        console.log('Steps:', steps);
-        console.log('Final Answer:', finalAnswer);
+        e.preventDefault();
+
+
+    };
+
+    const handleClosePopup = () => {
+        setPopupOpen(false);
     };
 
     return (
         <div className="flex justify-center items-center h-screen">
-
+            <Dialog open={popupOpen} onClose={handleClosePopup}>
+                <DialogHeader>Its a simple dialog.</DialogHeader>
+                <DialogBody>
+                    The key to more success is to have a lot of pillows. Put it this way,
+                    it took me twenty-five years to get these plants, twenty-five years of
+                    blood, sweat, and tears, and I'm never giving up, I'm just
+                    getting started. I'm up to something. Fan luv.
+                </DialogBody>
+                <DialogFooter>
+                    <Button
+                        variant="text"
+                        color="red"
+                        onClick={handleClosePopup}
+                        className="mr-1"
+                    >
+                        <span>Cancel</span>
+                    </Button>
+                    <Button variant="gradient" color="green">
+                        <span>Confirm</span>
+                    </Button>
+                </DialogFooter>
+            </Dialog>
 
             <div className="max-w mx-72 p-6 bg-white shadow-md rounded-md">
-
                 <h1 className="text-2xl font-bold mb-4">Create Question</h1>
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div className="overflow-y-auto h-40">
@@ -56,10 +109,7 @@ function CreateQuestion() {
                         {steps.map((step, index) => (
                             <div key={index} className="mb-4">
                                 <h3 className="text-md font-medium mb-2">Step {index + 1}</h3>
-
-
                                 <div className="grid grid-cols-6 space-x-2">
-
                                     <div className='col-span-2'>
                                         <label className="block mb-1" htmlFor={`step-${index}`}>Step:</label>
                                         <input
@@ -84,7 +134,6 @@ function CreateQuestion() {
                                         />
                                     </div>
 
-
                                     <button type="button" className="text-blue-500 " onClick={handleAddStep}>
                                         Add Step
                                     </button>
@@ -92,12 +141,10 @@ function CreateQuestion() {
                                     <button type="button" className="text-red-600" onClick={() => handleDeleteStep(index)}>
                                         Delete Step
                                     </button>
-
                                 </div>
                             </div>
                         ))}
                     </div>
-
 
                     <div className="grid-cols-2">
                         <label className="block mb-2" htmlFor="finalAnswer">Final Answer:</label>
@@ -115,7 +162,7 @@ function CreateQuestion() {
                     </button>
                 </form>
             </div>
-
+            <ToastContainer />
         </div>
     );
 }
