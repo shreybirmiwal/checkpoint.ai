@@ -11,6 +11,11 @@ import {
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
+import { db } from '../firebase';
+import { addDoc, deleteField, doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
+import { increment } from "firebase/firestore";
+import { collection } from "firebase/firestore";
+
 function CreateQuestion() {
     const [popupOpen, setPopupOpen] = useState(false);
     const [question, setQuestion] = useState('');
@@ -42,7 +47,8 @@ function CreateQuestion() {
         setSteps(updatedSteps);
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
+        e.preventDefault();
 
         if (!(question != '' && steps.length > 0 && finalAnswer != '' && steps[0].step != '' && steps[0].hint != '')) {
             toast.error('Please fill all fields!', {
@@ -60,16 +66,28 @@ function CreateQuestion() {
             console.log('Steps:', steps);
             console.log('Final Answer:', finalAnswer);
 
+
+
+            //ADD to the database of questions with teacher correct answers
+            const docRef = await addDoc(collection(db, "Teacher"), {
+                Answer: finalAnswer,
+                Question: question,
+                Steps: steps,
+            });
+            setId(docRef.id)
+            console.log("Document written with ID: ", docRef.id);
+
+            //add to list of owerners ei : who created what questiom
+            const ownerDocRef = doc(db, "Owners", "data");
+            await updateDoc(ownerDocRef, {
+                [docRef.id]: "TEACHER UID WOULD GO HERE"
+            });
+
             setFinalAnswer('');
             setQuestion('');
             setSteps([{ step: '', hint: '' }]);
-
-            setId(3)
             setPopupOpen(true);
         }
-
-        e.preventDefault();
-
 
     };
 
