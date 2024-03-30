@@ -1,10 +1,10 @@
 import React from "react";
+import Nav from "./Nav";
 
 export default function Hero() {
 
     return (
         <div>
-
             <section className="">
                 <div class="px-4 py-12 mx-auto max-w-7xl sm:px-6 md:px-12 lg:px-24 lg:py-24">
                     <div class="flex flex-wrap items-center mx-auto max-w-7xl">
@@ -21,11 +21,11 @@ export default function Hero() {
                             </div>
                         </div>
                         <div class="flex flex-col items-start mt-12 mb-16 text-left lg:flex-grow lg:w-1/2 lg:pl-6 xl:pl-24 md:mb-0 xl:mt-0">
-                            <h1 class="mb-8 text-4xl font-bold leading-none tracking-tighter text-neutral-600 md:text-7xl lg:text-5xl">Medium length display headline.</h1>
-                            <p class="mb-8 text-base leading-relaxed text-left text-black">Free and Premium themes, UI Kit's, templates and landing pages built with Tailwind CSS, HTML &amp; Next.js.</p>
+                            <h1 class="mb-8 text-4xl font-bold leading-none tracking-tighter text-neutral-600 md:text-7xl lg:text-5xl">Data powered AI to supercharge student learning.</h1>
+                            <p class="mb-8 text-base leading-relaxed text-left text-black">Get insights on student's learning by using AI to give realtime feedback while answering questions </p>
                             <div class="mt-0 lg:mt-6 max-w-7xl sm:flex">
                                 <div class="mt-3 rounded-lg sm:mt-0">
-                                    <button class="items-center block px-10 py-4 text-base font-medium text-center text-white transition duration-500 ease-in-out transform bg-blue-600 rounded-xl hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">Get bundle</button>
+                                    <button class="items-center block px-10 py-4 text-base font-medium text-center text-white transition duration-500 ease-in-out transform bg-blue-600 rounded-xl hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">Let's Start!</button>
                                 </div>
 
                             </div>
