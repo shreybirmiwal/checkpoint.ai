@@ -4,7 +4,7 @@ import { getAuth } from "firebase/auth";
 import { onAuthStateChanged } from "firebase/auth";
 import { arrayUnion, setDoc } from 'firebase/firestore';
 import { useNavigate } from 'react-router-dom';
-import { doc, updateDoc, getDoc } from 'firebase/firestore';
+import { doc, updateDoc, getDoc, getDocs, collection } from 'firebase/firestore';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -15,6 +15,9 @@ function TeacherDash() {
 
     const [tab, setTab] = useState(0) // 0 for students, 1 for assignments
     const [students, setStudents] = useState([]);
+
+    const [assignmentTitle, setAssignmentsTitle] = useState([]);
+    const [assingmentID, setAssignmentsID] = useState([]);
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, async (user) => {
@@ -32,6 +35,26 @@ function TeacherDash() {
                     setStudents(Object.values(studentsDoc.data().Students));
                 }
 
+
+                const titles = [];
+                const assignmentIds = [];
+                const teacherRef = collection(db, "Teacher");
+                const querySnapshot = await getDocs(teacherRef);
+                querySnapshot.forEach((doc) => {
+                    const data = doc.data();
+                    if (data.Teacher === user.uid) {
+                        const truncatedTitle = data.Question.length > 40 ? data.Question.slice(0, 40) + '...' : data.Question;
+                        titles.push(truncatedTitle);
+                        assignmentIds.push(doc.id);
+                    }
+                });
+                // console.log("ASSINGED ID ", assignmentIds);
+                // console.log("ASSINGED TITLE ", titles)
+
+                setAssignmentsID(assignmentIds);
+                setAssignmentsTitle(titles);
+
+
             } else {
                 navigate("/signup");
             }
@@ -43,6 +66,24 @@ function TeacherDash() {
 
     const handleTabClick = (tabIndex) => {
         setTab(tabIndex);
+    };
+
+    const copyToClipboard = async () => {
+        try {
+            await navigator.clipboard.writeText(user.uid);
+            toast.success(("Copied to clipboard!"), {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "dark",
+            });
+        } catch (error) {
+            alert('Error copying to clipboard:', error);
+        }
     };
 
 
@@ -85,16 +126,15 @@ function TeacherDash() {
                 </div>
 
                 <div>
-                    {tab === 0 && students.map((title, index) => (
-                        <div key={index} className="bg-blue-300 rounded-lg shadow-md p-10 mb-3">
-                            <p>Share this code to students to add them to your class: {user.uid}</p>
+                    {tab == 0 ? (
+                        <div className="bg-blue-300 rounded-lg shadow-md p-10 mb-3 hover:bg-blue-400" onClick={copyToClipboard}>
+                            {user && <p>Share this code to students to add them to your class: {user.uid}</p>}
                         </div>
-                    ))}
-                    {/* {tab === 1 && completedTitle.map((title, index) => (
-                        <div key={index} className="bg-white rounded-lg shadow-md p-10 mb-3">
-                            <p>{title.length > 40 ? title.slice(0, 40) + '...' : title}</p>
+                    ) : (
+                        <div className="bg-blue-300 rounded-lg shadow-md p-10 mb-3 hover:bg-blue-400">
+                            <p>Create an assignment</p>
                         </div>
-                    ))} */}
+                    )}
                 </div>
                 <div>
                     {tab === 0 && students.map((title, index) => (
@@ -102,11 +142,11 @@ function TeacherDash() {
                             <p>{title.length > 40 ? title.slice(0, 40) + '...' : title}</p>
                         </div>
                     ))}
-                    {/* {tab === 1 && completedTitle.map((title, index) => (
+                    {tab === 1 && assignmentTitle.map((title, index) => (
                         <div key={index} className="bg-white rounded-lg shadow-md p-10 mb-3">
-                            <p>{title.length > 40 ? title.slice(0, 40) + '...' : title}</p>
+                            <p>{title}</p>
                         </div>
-                    ))} */}
+                    ))}
                 </div>
             </div>
             <ToastContainer />
