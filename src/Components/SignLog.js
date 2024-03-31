@@ -2,7 +2,8 @@ import React from 'react'
 import { useState } from 'react';
 import { auth } from '../firebase';
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
-
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function SignLog() {
 
@@ -19,10 +20,31 @@ function SignLog() {
                 const user = userCredential.user;
 
                 console.log("UIDD " + user.uid)
+                toast.success(("Welcome " + user.username), {
+                    position: "top-right",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "dark",
+                });
+
             })
             .catch((error) => {
                 const errorCode = error.code;
                 const errorMessage = error.message;
+                toast.error(errorMessage, {
+                    position: "top-right",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "dark",
+                });
             });
     }
 
@@ -102,6 +124,8 @@ function SignLog() {
 
                 </div>
             </section>
+            <ToastContainer />
+
         </div>
     )
 }
