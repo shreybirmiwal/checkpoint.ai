@@ -25,7 +25,7 @@ export default function Hero() {
                             <p class="mb-8 text-base leading-relaxed text-left text-black">Get insights on student's learning by using AI to give realtime feedback while answering questions </p>
                             <div class="mt-0 lg:mt-6 max-w-7xl sm:flex">
                                 <div class="mt-3 rounded-lg sm:mt-0">
-                                    <a href="/signup">
+                                    <a href="/dashboard">
 
                                         <button class="ite</a>ms-center block px-10 py-4 text-base font-medium text-center text-white transition duration-500 ease-in-out transform bg-blue-600 rounded-xl hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">Let's Start!</button>
                                     </a>

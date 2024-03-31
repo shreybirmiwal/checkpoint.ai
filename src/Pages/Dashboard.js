@@ -6,8 +6,10 @@ import { useState } from "react";
 import { useNavigate } from 'react-router-dom';
 import { db } from '../firebase';
 import { addDoc, deleteField, doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
+import TeacherDash from '../Components/TeacherDash';
+import StudentDash from '../Components/StudentDash';
 
-function Dashboard() {
+export default function Dashboard() {
 
     const [user, setUser] = useState(null)
     const [teacher, setTeacher] = useState(false)
@@ -52,15 +54,15 @@ function Dashboard() {
             <div className="pt-5">
                 <Nav />
             </div>
-            <div className="flex items-center justify-center flex-grow">
+            <div className="h-full">
                 {teacher ? (
                     <div>
-                        teacher
+                        <TeacherDash />
                     </div>
 
                 ) : (
                     <div>
-                        student
+                        <StudentDash />
                     </div>
                 )}
             </div>
@@ -68,4 +70,3 @@ function Dashboard() {
     );
 }
 
-export default Dashboard
