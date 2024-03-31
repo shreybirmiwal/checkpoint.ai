@@ -23,7 +23,7 @@ function SignLog() {
 
                 console.log("UIDD " + user.uid)
 
-                toast.success(("Welcome " + user.email + "!"), {
+                toast.success(("Welcome " + user.displayName + "!"), {
                     position: "top-right",
                     autoClose: 5000,
                     hideProgressBar: false,
@@ -77,6 +77,7 @@ function SignLog() {
                                                 <input onChange={(e) => setEmail(e.target.value)} id="email" name="email" type="email" autocomplete="email" required="" placeholder="Email address" class=" text-sm font-medium text-neutral-600 block w-full px-5 py-3 text-base placeholder-black transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-200 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300" />
                                             </div>
                                         </div>
+
 
                                         <div class="space-y-1">
 

@@ -70,10 +70,7 @@ const StudentDash = () => {
         console.log('Joining class with code:', classCode);
 
         const classRef = doc(db, "Class", classCode);
-        setDoc(classRef, {
-            Students: arrayUnion(user.uid)
-        }, { merge: true }
-        );
+        setDoc(classRef, { Students: { [user.uid]: user.displayName } }, { merge: true })
 
 
         toast.success(("Joined class succesfully!"), {

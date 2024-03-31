@@ -10,18 +10,109 @@ import 'react-toastify/dist/ReactToastify.css';
 
 function TeacherDash() {
     const [user, setUser] = useState(null);
+    const auth = getAuth();
+    const navigate = useNavigate();
 
+    const [tab, setTab] = useState(0) // 0 for students, 1 for assignments
+    const [students, setStudents] = useState([]);
+
+    useEffect(() => {
+        const unsubscribe = onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                setUser(user);
+                const uid = user.uid;
+
+
+                //get assiognemnts
+
+                const studentsRef = doc(db, "Class", uid);
+                const studentsDoc = await getDoc(studentsRef);
+                if (studentsDoc.exists()) {
+                    console.log("Document data:", studentsDoc.data());
+                    setStudents(Object.values(studentsDoc.data().Students));
+                }
+
+            } else {
+                navigate("/signup");
+            }
+        });
+
+        return unsubscribe;
+    }, [auth, navigate]);
+
+
+    const handleTabClick = (tabIndex) => {
+        setTab(tabIndex);
+    };
 
 
     return (
         <div className="container mx-auto mt-8">
+            {/* <div className="flex justify-between mb-8">
+                <div className="flex items-center">
+                    <div className="flex">
+                        <input
+                            type="text"
+                            placeholder="Enter class code"
+                            className="border border-gray-300 rounded px-4 py-2 mr-2 focus:outline-none"
+                            value={classCode}
+                            onChange={handleClassCodeChange}
+                        />
+                        <button
+                            onClick={joinClass}
+                            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none"
+                        >
+                            Join with Code
+                        </button>
+                    </div>
+                </div>
+            </div> */}
+            <div>
+                <h2 className="text-3xl font-semibold mb-4">My Dashboard</h2>
+                <div className='flex flex-row mb-3 px-1'>
+                    <h3
+                        className={`mr-5 ${tab === 0 ? 'text-deep-purple-500 font-bold underline' : ''}`}
+                        onClick={() => handleTabClick(0)}
+                    >
+                        My Students
+                    </h3>
+                    <h3
+                        className={`mr-5 ${tab === 1 ? 'text-deep-purple-500 font-bold underline' : ''}`}
+                        onClick={() => handleTabClick(1)}
+                    >
+                        My Assignments
+                    </h3>
+                </div>
 
-
-
+                <div>
+                    {tab === 0 && students.map((title, index) => (
+                        <div key={index} className="bg-blue-300 rounded-lg shadow-md p-10 mb-3">
+                            <p>Share this code to students to add them to your class: {user.uid}</p>
+                        </div>
+                    ))}
+                    {/* {tab === 1 && completedTitle.map((title, index) => (
+                        <div key={index} className="bg-white rounded-lg shadow-md p-10 mb-3">
+                            <p>{title.length > 40 ? title.slice(0, 40) + '...' : title}</p>
+                        </div>
+                    ))} */}
+                </div>
+                <div>
+                    {tab === 0 && students.map((title, index) => (
+                        <div key={index} className="bg-white rounded-lg shadow-md p-10 mb-3">
+                            <p>{title.length > 40 ? title.slice(0, 40) + '...' : title}</p>
+                        </div>
+                    ))}
+                    {/* {tab === 1 && completedTitle.map((title, index) => (
+                        <div key={index} className="bg-white rounded-lg shadow-md p-10 mb-3">
+                            <p>{title.length > 40 ? title.slice(0, 40) + '...' : title}</p>
+                        </div>
+                    ))} */}
+                </div>
+            </div>
             <ToastContainer />
 
         </div>
-    )
+    );
 }
 
 export default TeacherDash

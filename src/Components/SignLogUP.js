@@ -7,6 +7,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { db } from '../firebase';
 import { addDoc, deleteField, doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
+import { updateProfile } from 'firebase/auth';
 
 function SignLogUP() {
 
@@ -15,6 +16,8 @@ function SignLogUP() {
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [username, setUsername] = useState('');
+
     const navigate = useNavigate();
 
     const handleSubmit = async () => {
@@ -25,6 +28,11 @@ function SignLogUP() {
 
                 console.log("TEACHER ?? " + teacher)
                 console.log("UIDD " + user.uid)
+
+                updateProfile(user, {
+                    displayName: username
+                })
+
 
                 await updateDoc(doc(db, "Users", "isTeacher"), {
                     [user.uid]: teacher,
@@ -40,7 +48,7 @@ function SignLogUP() {
 
 
 
-                toast.success(("Welcome " + user.email + "!"), {
+                toast.success(("Welcome " + user.displayName + "!"), {
                     position: "top-right",
                     autoClose: 5000,
                     hideProgressBar: false,
@@ -100,6 +108,12 @@ function SignLogUP() {
                                         <div>
                                             <div class="mt-1">
                                                 <input onChange={(e) => setEmail(e.target.value)} id="email" name="email" type="email" autocomplete="email" required="" placeholder="Email address" class=" text-sm font-medium text-neutral-600 block w-full px-5 py-3 text-base placeholder-black transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-200 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300" />
+                                            </div>
+                                        </div>
+
+                                        <div>
+                                            <div class="mt-1">
+                                                <input onChange={(e) => setUsername(e.target.value)} required="" placeholder="Username" class=" text-sm font-medium text-neutral-600 block w-full px-5 py-3 text-base placeholder-black transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-200 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300" />
                                             </div>
                                         </div>
 
