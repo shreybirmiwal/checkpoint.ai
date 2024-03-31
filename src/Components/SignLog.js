@@ -1,6 +1,31 @@
 import React from 'react'
+import { useState } from 'react';
+import { auth } from '../firebase';
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
+
 
 function SignLog() {
+
+    const auth = getAuth();
+
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+
+    const handleSubmit = async () => {
+        console.log(email, password);
+
+        signInWithEmailAndPassword(auth, email, password)
+            .then((userCredential) => {
+                const user = userCredential.user;
+
+                console.log("UIDD " + user.uid)
+            })
+            .catch((error) => {
+                const errorCode = error.code;
+                const errorMessage = error.message;
+            });
+    }
+
     return (
         <div className='bg-gray-50  shadow-md rounded-2xl'>
             <section>
@@ -13,17 +38,18 @@ function SignLog() {
 
                             <div class="mt-8">
                                 <div class="mt-6">
-                                    <form action="#" method="POST" class="space-y-6">
+                                    <div class="space-y-6">
                                         <div>
                                             <div class="mt-1">
-                                                <input id="email" name="email" type="email" autocomplete="email" required="" placeholder="Email address" class=" text-sm font-medium text-neutral-600 block w-full px-5 py-3 text-base placeholder-black transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-200 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300" />
+
+                                                <input onChange={(e) => setEmail(e.target.value)} id="email" name="email" type="email" autocomplete="email" required="" placeholder="Email address" class=" text-sm font-medium text-neutral-600 block w-full px-5 py-3 text-base placeholder-black transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-200 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300" />
                                             </div>
                                         </div>
 
                                         <div class="space-y-1">
 
                                             <div class="mt-1">
-                                                <input id="password" name="password" type="password" autocomplete="current-password" required="" placeholder="Your Password" class=" text-sm font-medium text-neutral-600 block w-full px-5 py-3 text-base placeholder-black transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-200 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300" />
+                                                <input onChange={(e) => setPassword(e.target.value)} id="password" name="password" type="password" autocomplete="current-password" required="" placeholder="Your Password" class=" text-sm font-medium text-neutral-600 block w-full px-5 py-3 text-base placeholder-black transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-200 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300" />
                                             </div>
                                         </div>
 
@@ -39,10 +65,10 @@ function SignLog() {
                                         </div> */}
 
                                         <div>
-                                            <button type="submit" class="flex items-center justify-center w-full px-10 py-4 text-base font-medium text-center text-white transition duration-500 ease-in-out transform bg-blue-600 rounded-xl hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">Sign in</button>
+                                            <button onClick={handleSubmit} type="submit" class="flex items-center justify-center w-full px-10 py-4 text-base font-medium text-center text-white transition duration-500 ease-in-out transform bg-blue-600 rounded-xl hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">Sign in</button>
                                         </div>
-                                    </form>
-                                    <div class="relative my-4">
+                                    </div>
+                                    {/* <div class="relative my-4">
                                         <div class="absolute inset-0 flex items-center">
                                             <div class="w-full border-t border-gray-300"></div>
                                         </div>
@@ -68,7 +94,7 @@ function SignLog() {
                                                 <span class="ml-4"> Log in with Google</span>
                                             </div>
                                         </button>
-                                    </div>
+                                    </div> */}
                                 </div>
                             </div>
                         </div>
