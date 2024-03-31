@@ -45,8 +45,11 @@ const StudentDash = () => {
                     console.log("ASSINGED ID ", Object.keys(assingedID));
                     console.log("COMPLETED ID " + completedID)
 
-                    // setAssignments(assingedID);
-                    // setCompleted(completedID);
+
+                    setAssignmentsID(Object.keys(assingedID));
+                    setAssignmentsTitle(Object.values(assingedID));
+                    setCompletedID(Object.keys(completedID));
+                    setCompletedTitle(Object.values(completedID));
 
 
                 } else {
@@ -110,9 +113,9 @@ const StudentDash = () => {
             <div>
                 <h2 className="text-3xl font-semibold mb-4">My Assignments</h2>
                 <div>
-                    {assignments.map((assignment, index) => (
+                    {assignmentsTitle.map((title, index) => (
                         <div key={index} className="bg-white rounded-lg shadow-md p-10 mb-3">
-                            <p>{assignment.title}</p>
+                            <p>{title}</p>
                         </div>
                     ))}
                 </div>
