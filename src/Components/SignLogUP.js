@@ -31,6 +31,15 @@ function SignLogUP() {
                 })
 
 
+                if (!teacher) {
+                    await setDoc(doc(db, "Students", user.uid), {
+                        Assigned: {},
+                        Completed: {},
+                    }, { merge: true })
+                }
+
+
+
                 toast.success(("Welcome " + user.email + "!"), {
                     position: "top-right",
                     autoClose: 5000,

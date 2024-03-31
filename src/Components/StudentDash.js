@@ -4,15 +4,19 @@ import { getAuth } from "firebase/auth";
 import { onAuthStateChanged } from "firebase/auth";
 import { arrayUnion, setDoc } from 'firebase/firestore';
 import { useNavigate } from 'react-router-dom';
-import { doc, updateDoc } from 'firebase/firestore';
-
+import { doc, updateDoc, getDoc } from 'firebase/firestore';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 const StudentDash = () => {
     const [user, setUser] = useState(null);
     const [classCode, setClassCode] = useState('');
-    const [assignments, setAssignments] = useState([]);
+
+    const [assignmentsID, setAssignmentsID] = useState([]);
+    const [assignmentsTitle, setAssignmentsTitle] = useState([]);
+
+    const [completedID, setCompletedID] = useState([]);
+    const [completedTitle, setCompletedTitle] = useState([]);
 
     const auth = getAuth();
     const navigate = useNavigate();
@@ -25,6 +29,30 @@ const StudentDash = () => {
         const unsubscribe = onAuthStateChanged(auth, async (user) => {
             if (user) {
                 setUser(user);
+                const uid = user.uid;
+
+                //get assiognemnts
+                var assingedID = []
+                var completedID = []
+
+                const assingedRef = doc(db, "Students", uid);
+                const assignedSnap = await getDoc(assingedRef);
+                if (assignedSnap.exists()) {
+                    console.log("Document data:", assignedSnap.data());
+                    assingedID = (assignedSnap.data().Assigned);
+                    completedID = (assignedSnap.data().Completed);
+
+                    console.log("ASSINGED ID ", Object.keys(assingedID));
+                    console.log("COMPLETED ID " + completedID)
+
+                    // setAssignments(assingedID);
+                    // setCompleted(completedID);
+
+
+                } else {
+                    console.log("No such document!");
+                }
+
             } else {
                 navigate("/signup");
             }
