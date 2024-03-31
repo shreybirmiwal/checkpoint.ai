@@ -20,7 +20,8 @@ function SignLog() {
                 const user = userCredential.user;
 
                 console.log("UIDD " + user.uid)
-                toast.success(("Welcome " + user.username), {
+
+                toast.success(("Welcome " + user.email + "!"), {
                     position: "top-right",
                     autoClose: 5000,
                     hideProgressBar: false,
