@@ -4,6 +4,7 @@ import { auth } from '../firebase';
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { useNavigate } from "react-router-dom";
 
 function SignLog() {
 
@@ -11,6 +12,7 @@ function SignLog() {
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const navigate = useNavigate();
 
     const handleSubmit = async () => {
         console.log(email, password);
@@ -31,6 +33,13 @@ function SignLog() {
                     progress: undefined,
                     theme: "dark",
                 });
+
+                console.log("ABT TO REDIRECT")
+
+                setTimeout(() => {
+                    navigate("/dashboard");
+                }, 1000);
+
 
             })
             .catch((error) => {
