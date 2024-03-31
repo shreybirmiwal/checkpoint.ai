@@ -18,6 +18,8 @@ const StudentDash = () => {
     const [completedID, setCompletedID] = useState([]);
     const [completedTitle, setCompletedTitle] = useState([]);
 
+    const [tab, setTab] = useState(0) // 0 for assigned, 1 for completed
+
     const auth = getAuth();
     const navigate = useNavigate();
 
@@ -88,6 +90,10 @@ const StudentDash = () => {
         setClassCode('');
     };
 
+    const handleTabClick = (tabIndex) => {
+        setTab(tabIndex);
+    };
+
     return (
         <div className="container mx-auto mt-8">
             <div className="flex justify-between mb-8">
@@ -112,10 +118,29 @@ const StudentDash = () => {
             </div>
             <div>
                 <h2 className="text-3xl font-semibold mb-4">My Assignments</h2>
+                <div className='flex flex-row mb-3 px-1'>
+                    <h3
+                        className={`mr-5 ${tab === 0 ? 'text-blue-500 font-bold' : ''}`}
+                        onClick={() => handleTabClick(0)}
+                    >
+                        Assigned
+                    </h3>
+                    <h3
+                        className={`${tab === 1 ? 'text-blue-500 font-bold' : ''}`}
+                        onClick={() => handleTabClick(1)}
+                    >
+                        Completed
+                    </h3>
+                </div>
                 <div>
-                    {assignmentsTitle.map((title, index) => (
+                    {tab === 0 && assignmentsTitle.map((title, index) => (
                         <div key={index} className="bg-white rounded-lg shadow-md p-10 mb-3">
-                            <p>{title}</p>
+                            <p>{title.length > 40 ? title.slice(0, 40) + '...' : title}</p>
+                        </div>
+                    ))}
+                    {tab === 1 && completedTitle.map((title, index) => (
+                        <div key={index} className="bg-white rounded-lg shadow-md p-10 mb-3">
+                            <p>{title.length > 40 ? title.slice(0, 40) + '...' : title}</p>
                         </div>
                     ))}
                 </div>
