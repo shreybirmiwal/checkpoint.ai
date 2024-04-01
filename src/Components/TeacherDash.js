@@ -182,7 +182,8 @@ function TeacherDash() {
                 </div>
                 <div>
                     {tab === 0 && students.map((title, index) => (
-                        <div key={index} className="bg-white rounded-lg shadow-md p-10 mb-3 hover:bg-gray-200" onClick={() => navigate('/analytics/students/' + studentID[index])}>
+                        // <div key={index} className="bg-white rounded-lg shadow-md p-10 mb-3 hover:bg-gray-200" onClick={() => navigate('/analytics/students/' + studentID[index])}>
+                        <div key={index} className="bg-white rounded-lg shadow-md p-10 mb-3">
                             <p>{title.length > 40 ? title.slice(0, 40) + '...' : title}</p>
                         </div>
                     ))}
