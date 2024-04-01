@@ -16,7 +16,7 @@ import { addDoc, deleteField, doc, getDoc, setDoc, updateDoc } from "firebase/fi
 import { increment } from "firebase/firestore";
 import { collection } from "firebase/firestore";
 
-function CreateQuestion({ teacherUID }) {
+function CreateQuestion({ teacherUID, closeModal }) {
     const [question, setQuestion] = useState('');
     const [steps, setSteps] = useState([{ step: '', hint: '' }]);
     const [finalAnswer, setFinalAnswer] = useState('');
@@ -78,7 +78,16 @@ function CreateQuestion({ teacherUID }) {
             const questionID = docRef.id
             console.log("Document written with ID: ", questionID);
 
-
+            toast.success(("Created question.. (1/2)"), {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "dark",
+            });
 
             //loop through class, get all students in class, than update each students assigned work
 
@@ -106,6 +115,18 @@ function CreateQuestion({ teacherUID }) {
 
                 }
 
+                toast.success(("Assigned to students.. (2/2)!"), {
+                    position: "top-right",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "dark",
+                });
+
+
             } else {
                 console.log("No such document!");
                 toast.error('Error!', {
@@ -124,6 +145,12 @@ function CreateQuestion({ teacherUID }) {
             setFinalAnswer('');
             setQuestion('');
             setSteps([{ step: '', hint: '' }]);
+
+            closeModal();
+
+            setTimeout(() => {
+                window.location.reload();
+            }, 2000);
         }
 
     };

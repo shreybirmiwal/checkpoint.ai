@@ -171,7 +171,7 @@ function TeacherDash() {
                                     Close
                                 </div>
 
-                                <CreateQuestion teacherUID={user.uid} />
+                                <CreateQuestion teacherUID={user.uid} closeModal={toggleModal} />
                             </Modal>
 
                         </div>
