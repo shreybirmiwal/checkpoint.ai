@@ -5,7 +5,8 @@ import { Home } from "./Pages/Home";
 import Login from "./Pages/Login";
 import SignUp from "./Pages/SignUp";
 import Dashboard from "./Pages/Dashboard";
-import CreateQuestion from "./Components/CreateQuestion";
+import AnalyticsStudents from "./Components/Analytics/AnalyticsStudents";
+import AnalyticsAssignments from "./Components/Analytics/AnalyticsAssignments";
 
 function App() {
   return (
@@ -16,8 +17,9 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/create" element={<CreateQuestion />} />
 
+        <Route path="/analytics/students/:id" element={<AnalyticsStudents />} />
+        <Route path="/analytics/assignments/:id" element={<AnalyticsAssignments />} />
 
       </Routes>
     </Router>

@@ -3,7 +3,7 @@ import { db } from '../firebase';
 import { getAuth } from "firebase/auth";
 import { onAuthStateChanged } from "firebase/auth";
 import { arrayUnion, setDoc } from 'firebase/firestore';
-import { useNavigate } from 'react-router-dom';
+import { redirect, useNavigate } from 'react-router-dom';
 import { doc, updateDoc, getDoc, getDocs, collection } from 'firebase/firestore';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -18,6 +18,7 @@ function TeacherDash() {
 
     const [tab, setTab] = useState(0) // 0 for students, 1 for assignments
     const [students, setStudents] = useState([]);
+    const [studentID, setStudentID] = useState([]);
 
     const [assignmentTitle, setAssignmentsTitle] = useState([]);
     const [assingmentID, setAssignmentsID] = useState([]);
@@ -43,6 +44,7 @@ function TeacherDash() {
                 if (studentsDoc.exists()) {
                     console.log("Document data:", studentsDoc.data());
                     setStudents(Object.values(studentsDoc.data().Students));
+                    setStudentID(Object.keys(studentsDoc.data().Students));
                 }
 
 
@@ -180,12 +182,12 @@ function TeacherDash() {
                 </div>
                 <div>
                     {tab === 0 && students.map((title, index) => (
-                        <div key={index} className="bg-white rounded-lg shadow-md p-10 mb-3">
+                        <div key={index} className="bg-white rounded-lg shadow-md p-10 mb-3 hover:bg-gray-200" onClick={() => navigate('/analytics/students/' + studentID[index])}>
                             <p>{title.length > 40 ? title.slice(0, 40) + '...' : title}</p>
                         </div>
                     ))}
                     {tab === 1 && assignmentTitle.map((title, index) => (
-                        <div key={index} className="bg-white rounded-lg shadow-md p-10 mb-3">
+                        <div key={index} className="bg-white rounded-lg shadow-md p-10 mb-3 hover:bg-gray-200" onClick={() => navigate('/analytics/assignments/' + assingmentID[index])}>
                             <p>{title}</p>
                         </div>
                     ))}
