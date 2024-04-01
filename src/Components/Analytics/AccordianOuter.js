@@ -5,6 +5,7 @@ import {
     AccordionBody,
 } from "@material-tailwind/react";
 import { Accordian } from "./Accordian";
+import { TopMistakes } from "./TopMistakes";
 
 export function AccordianOuter() {
     const [open, setOpen] = React.useState();
@@ -16,19 +17,17 @@ export function AccordianOuter() {
             <Accordion open={open === 1} >
                 <AccordionHeader className='font-bold text-xl text-purple-600 underline mb-2' onClick={() => handleOpen(1)}>Top Mistakes</AccordionHeader>
                 <AccordionBody>
-                    <Accordian />
+                    <TopMistakes />
                 </AccordionBody>
             </Accordion>
             <Accordion open={open === 2} >
                 <AccordionHeader className='font-bold text-xl text-purple-600 underline mb-2' onClick={() => handleOpen(2)}>Student results</AccordionHeader>
                 <AccordionBody>
-                    <Accordian />
                 </AccordionBody>
             </Accordion>
             <Accordion open={open === 3} >
                 <AccordionHeader className='font-bold text-xl text-purple-600 underline mb-2' onClick={() => handleOpen(3)}>Overall analytics</AccordionHeader>
                 <AccordionBody>
-                    <Accordian />
                 </AccordionBody>
             </Accordion>
         </>

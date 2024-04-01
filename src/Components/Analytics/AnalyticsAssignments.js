@@ -8,12 +8,23 @@ import { Accordian } from './Accordian';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { AccordianOuter } from './AccordianOuter';
+import { TopMistakes } from './TopMistakes';
+
+
+import { db } from '../../firebase';
+import { doc, updateDoc, getDoc, getDocs, collection } from 'firebase/firestore';
+
 
 function AnalyticsAssignments() {
     let { id } = useParams();
     const [user, setUser] = useState(null);
     const auth = getAuth();
     const navigate = useNavigate();
+
+
+    const [common_mistakes, setCommonMistakes] = useState([]);
+    const [proficiency, setProficiency] = useState();
+    const [studentRes, setStudentRes] = useState();
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, async (user) => {
@@ -27,6 +38,22 @@ function AnalyticsAssignments() {
 
         return unsubscribe;
     }, [auth, navigate]);
+
+    useEffect(() => {
+        //get data
+        getData();
+    }, []);
+
+    const getData = async () => {
+        const dataDoc = await getDoc(doc(db, "Stats", id));
+        console.log("GETTING DATA BRO .")
+        if (dataDoc.exists()) {
+            console.log("Document data:", dataDoc.data());
+            setCommonMistakes(dataDoc.data().CommonMistakes);
+            setProficiency(dataDoc.data().Proficiency);
+            setStudentRes(dataDoc.data().StudentRes);
+        }
+    }
 
 
     return (

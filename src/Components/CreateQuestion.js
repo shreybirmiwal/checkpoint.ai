@@ -142,6 +142,14 @@ function CreateQuestion({ teacherUID, closeModal }) {
             }
 
 
+            //add question to stats
+            await setDoc(doc(db, "Stats", questionID), {
+                CommonMistakes: [],
+                Proficiency: 0,
+                StudentRes: {}
+            });
+
+
             setFinalAnswer('');
             setQuestion('');
             setSteps([{ step: '', hint: '' }]);
