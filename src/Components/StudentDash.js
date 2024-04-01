@@ -70,19 +70,33 @@ const StudentDash = () => {
         console.log('Joining class with code:', classCode);
 
         const classRef = doc(db, "Class", classCode);
+
         updateDoc(classRef, { Students: { [user.uid]: user.displayName } })
-
-
-        toast.success(("Joined class succesfully!"), {
-            position: "top-right",
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "dark",
-        });
+            .then(() => {
+                toast.success("Joined class successfully!", {
+                    position: "top-right",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "dark",
+                });
+            })
+            .catch((error) => {
+                console.error("Error joining class:", error);
+                toast.error("Failed to join class. Please try again.", {
+                    position: "top-right",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "dark",
+                });
+            });
 
         setClassCode('');
     };
