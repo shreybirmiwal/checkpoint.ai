@@ -7,8 +7,11 @@ import { useNavigate } from 'react-router-dom';
 import { doc, updateDoc, getDoc, getDocs, collection } from 'firebase/firestore';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import Modal from 'react-modal';
+import CreateQuestion from '../Pages/CreateQuestion';
 
 function TeacherDash() {
+
     const [user, setUser] = useState(null);
     const auth = getAuth();
     const navigate = useNavigate();
@@ -18,6 +21,13 @@ function TeacherDash() {
 
     const [assignmentTitle, setAssignmentsTitle] = useState([]);
     const [assingmentID, setAssignmentsID] = useState([]);
+
+
+    const [modalIsOpen, setIsOpen] = React.useState(false);
+
+    const toggleModal = () => {
+        setIsOpen(!modalIsOpen)
+    };
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, async (user) => {
@@ -86,6 +96,17 @@ function TeacherDash() {
         }
     };
 
+    const modalStyle = {
+        content: {
+            top: '10%',
+            left: '25%',
+
+            width: '50%',
+            height: '80%',
+            background: '#CE93D8',
+        },
+    };
+
 
     return (
         <div className="container mx-auto mt-8">
@@ -131,9 +152,30 @@ function TeacherDash() {
                             {user && <p>Share this code to students to add them to your class: {user.uid}</p>}
                         </div>
                     ) : (
-                        <div className="bg-blue-300 rounded-lg shadow-md p-10 mb-3 hover:bg-blue-400">
-                            <p>Create an assignment</p>
+                        <div>
+
+                            <div className="bg-blue-300 rounded-lg shadow-md p-10 mb-3 hover:bg-blue-400" onClick={toggleModal}>
+                                <p>Create an assignment</p>
+                            </div>
+
+                            <Modal
+                                isOpen={modalIsOpen}
+                                onRequestClose={toggleModal}
+                                style={modalStyle}
+                                contentLabel="Example Modal"
+                            >
+                                <div className='hover:text-purple-700 flex flex-row mb-2' onClick={toggleModal}>
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+                                    </svg>
+                                    Close
+                                </div>
+
+                                <CreateQuestion />
+                            </Modal>
+
                         </div>
+
                     )}
                 </div>
                 <div>

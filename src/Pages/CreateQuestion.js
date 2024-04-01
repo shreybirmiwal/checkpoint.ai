@@ -96,22 +96,9 @@ function CreateQuestion() {
     };
 
     return (
-        <div className="flex justify-center items-center h-screen">
+        <div>
 
-
-            <Dialog open={popupOpen} onClose={handleClosePopup}>
-                <DialogHeader>Your question has been created!</DialogHeader>
-                <DialogBody>
-                    Share this link: http://localhost:3000/{id}
-                </DialogBody>
-                <DialogFooter>
-                    <Button variant="gradient" color="green" onClick={handleClosePopup}>
-                        <span>Confirm</span>
-                    </Button>
-                </DialogFooter>
-            </Dialog>
-
-            <div className="max-w mx-72 p-6 bg-white shadow-md rounded-md">
+            <div className="max-w  p-6 bg-gray-200 shadow-md rounded-md">
                 <h1 className="text-2xl font-bold mb-4">Create Question</h1>
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div className="overflow-y-auto h-40">
