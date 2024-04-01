@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { db } from '../firebase';
 import { getAuth } from "firebase/auth";
 import { onAuthStateChanged } from "firebase/auth";
-import { arrayUnion, setDoc } from 'firebase/firestore';
+import { addDoc, arrayUnion, setDoc } from 'firebase/firestore';
 import { useNavigate } from 'react-router-dom';
 import { doc, updateDoc, getDoc } from 'firebase/firestore';
 import { ToastContainer, toast } from 'react-toastify';
@@ -70,7 +70,7 @@ const StudentDash = () => {
         console.log('Joining class with code:', classCode);
 
         const classRef = doc(db, "Class", classCode);
-        setDoc(classRef, { Students: { [user.uid]: user.displayName } }, { merge: true })
+        updateDoc(classRef, { Students: { [user.uid]: user.displayName } })
 
 
         toast.success(("Joined class succesfully!"), {

@@ -44,6 +44,10 @@ function SignLogUP() {
                         Assigned: {},
                         Completed: {},
                     }, { merge: true })
+                } else {
+                    await setDoc(doc(db, "Class", user.uid), {
+                        Students: {},
+                    }, { merge: true })
                 }
 
 
