@@ -22,6 +22,11 @@ const StudentDash = () => {
 
     const [tab, setTab] = useState(0) // 0 for assigned, 1 for completed
 
+
+
+    const [clickedQuestion, setClickedQuestion] = useState('');
+    const [clickedQuestionID, setClickedQuestionID] = useState('');
+
     const auth = getAuth();
     const navigate = useNavigate();
 
@@ -34,6 +39,13 @@ const StudentDash = () => {
     const toggleModal = () => {
         setIsOpen(!modalIsOpen)
     };
+
+    const handleClickAssignment = (e) => {
+        //console.log(e.target.innerText);
+        setClickedQuestion(e.target.innerText);
+        setClickedQuestionID(assignmentsID[assignmentsTitle.indexOf(e.target.innerText)]);
+        toggleModal();
+    }
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, async (user) => {
@@ -164,9 +176,10 @@ const StudentDash = () => {
                 </div>
                 <div>
                     {tab === 0 && assignmentsTitle.map((title, index) => (
-                        <div key={index} className="bg-white rounded-lg shadow-md p-10 mb-3 hover:bg-gray-200" onClick={toggleModal}>
+                        <div key={index} className="bg-white rounded-lg shadow-md p-10 mb-3 hover:bg-gray-200" onClick={handleClickAssignment}>
                             <p>{title.length > 40 ? title.slice(0, 40) + '...' : title}</p>
                         </div>
+
                     ))}
                     {tab === 1 && completedTitle.map((title, index) => (
                         <div key={index} className="bg-white rounded-lg shadow-md p-10 mb-3">
@@ -187,7 +200,7 @@ const StudentDash = () => {
                     </svg>
                     Close
                 </div>
-                <AnswerQuestion closeModal={toggleModal} />
+                <AnswerQuestion closeModal={toggleModal} question={clickedQuestion} questionID={clickedQuestionID} />
             </Modal>
 
             <ToastContainer />

@@ -16,8 +16,7 @@ import { addDoc, deleteField, doc, getDoc, setDoc, updateDoc } from "firebase/fi
 import { increment } from "firebase/firestore";
 import { collection } from "firebase/firestore";
 
-function AnswerQuestion({ questionID, closeModal }) {
-    const [question, setQuestion] = useState('');
+function AnswerQuestion({ questionID, closeModal, question }) {
     const [steps, setSteps] = useState([{ step: '', hint: '' }]);
     const [finalAnswer, setFinalAnswer] = useState('');
 
