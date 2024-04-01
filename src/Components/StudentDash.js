@@ -7,6 +7,8 @@ import { useNavigate } from 'react-router-dom';
 import { doc, updateDoc, getDoc } from 'firebase/firestore';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import AnswerQuestion from './AnswerQuestion';
+import Modal from 'react-modal';
 
 const StudentDash = () => {
     const [user, setUser] = useState(null);
@@ -25,6 +27,12 @@ const StudentDash = () => {
 
     const handleClassCodeChange = (e) => {
         setClassCode(e.target.value);
+    };
+
+    const [modalIsOpen, setIsOpen] = React.useState(false);
+
+    const toggleModal = () => {
+        setIsOpen(!modalIsOpen)
     };
 
     useEffect(() => {
@@ -101,6 +109,17 @@ const StudentDash = () => {
         setClassCode('');
     };
 
+    const modalStyle = {
+        content: {
+            top: '10%',
+            left: '25%',
+
+            width: '50%',
+            height: '80%',
+            background: '#CE93D8',
+        },
+    };
+
     const handleTabClick = (tabIndex) => {
         setTab(tabIndex);
     };
@@ -145,7 +164,7 @@ const StudentDash = () => {
                 </div>
                 <div>
                     {tab === 0 && assignmentsTitle.map((title, index) => (
-                        <div key={index} className="bg-white rounded-lg shadow-md p-10 mb-3">
+                        <div key={index} className="bg-white rounded-lg shadow-md p-10 mb-3 hover:bg-gray-200" onClick={toggleModal}>
                             <p>{title.length > 40 ? title.slice(0, 40) + '...' : title}</p>
                         </div>
                     ))}
@@ -156,6 +175,21 @@ const StudentDash = () => {
                     ))}
                 </div>
             </div>
+
+            <Modal
+                isOpen={modalIsOpen}
+                onRequestClose={toggleModal}
+                style={modalStyle}
+            >
+                <div className='hover:text-purple-700 flex flex-row mb-2' onClick={toggleModal}>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+                    </svg>
+                    Close
+                </div>
+                <AnswerQuestion closeModal={toggleModal} />
+            </Modal>
+
             <ToastContainer />
 
         </div>

@@ -8,7 +8,6 @@ import { Accordian } from './Accordian';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { AccordianOuter } from './AccordianOuter';
-import { TopMistakes } from './TopMistakes';
 
 
 import { db } from '../../firebase';
@@ -67,7 +66,7 @@ function AnalyticsAssignments() {
                 ID: {id}
 
                 <div className='bg-gray-200 rounded-xl p-3 mt-5'>
-                    <AccordianOuter />
+                    <AccordianOuter common_mistakes={common_mistakes} />
                 </div>
 
             </div>
