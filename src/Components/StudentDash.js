@@ -174,7 +174,7 @@ const StudentDash = () => {
                         Completed
                     </h3>
                 </div>
-                <div>
+                <div className='overflow-y-scroll h-96'>
                     {tab === 0 && assignmentsTitle.map((title, index) => (
                         <div key={index} className="bg-white rounded-lg shadow-md p-10 mb-3 hover:bg-gray-200" onClick={handleClickAssignment}>
                             <p>{title.length > 40 ? title.slice(0, 40) + '...' : title}</p>

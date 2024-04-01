@@ -180,7 +180,7 @@ function TeacherDash() {
 
                     )}
                 </div>
-                <div>
+                <div className='overflow-y-scroll h-96'>
                     {tab === 0 && students.map((title, index) => (
                         // <div key={index} className="bg-white rounded-lg shadow-md p-10 mb-3 hover:bg-gray-200" onClick={() => navigate('/analytics/students/' + studentID[index])}>
                         <div key={index} className="bg-white rounded-lg shadow-md p-10 mb-3">
