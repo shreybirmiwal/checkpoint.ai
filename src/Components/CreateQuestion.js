@@ -16,8 +16,7 @@ import { addDoc, deleteField, doc, getDoc, setDoc, updateDoc } from "firebase/fi
 import { increment } from "firebase/firestore";
 import { collection } from "firebase/firestore";
 
-function CreateQuestion() {
-    const [popupOpen, setPopupOpen] = useState(false);
+function CreateQuestion({ teacherUID }) {
     const [question, setQuestion] = useState('');
     const [steps, setSteps] = useState([{ step: '', hint: '' }]);
     const [finalAnswer, setFinalAnswer] = useState('');
@@ -67,33 +66,68 @@ function CreateQuestion() {
             console.log('Final Answer:', finalAnswer);
 
 
-
             //ADD to the database of questions with teacher correct answers
             const docRef = await addDoc(collection(db, "Teacher"), {
                 Answer: finalAnswer,
                 Question: question,
                 Steps: steps,
+                Teacher: teacherUID
             });
             setId(docRef.id)
-            console.log("Document written with ID: ", docRef.id);
 
-            //add to list of owerners ei : who created what questiom
-            const ownerDocRef = doc(db, "Owners", "data");
-            await updateDoc(ownerDocRef, {
-                [docRef.id]: "TEACHER UID WOULD GO HERE"
-            });
+            const questionID = docRef.id
+            console.log("Document written with ID: ", questionID);
+
+
+
+            //loop through class, get all students in class, than update each students assigned work
+
+            const classRef = doc(db, "Class", teacherUID);
+            const classSNAP = await getDoc(classRef);
+            const students = classSNAP.data().Students;
+
+            if (classSNAP.exists()) {
+                console.log("teacher students:", classSNAP.data().Students);
+
+
+                for (const student in students) {
+                    console.log("MY STUDENT S " + student)
+
+                    var curData_assigned;
+                    const studentRef = doc(db, "Students", student);
+                    const studentSnap = await getDoc(studentRef);
+                    curData_assigned = studentSnap.data().Assigned;
+                    console.log(curData_assigned);
+                    curData_assigned[questionID] = question;
+
+                    updateDoc(studentRef, {
+                        Assigned: curData_assigned
+                    }, { merge: true });
+
+                }
+
+            } else {
+                console.log("No such document!");
+                toast.error('Error!', {
+                    position: "top-right",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "dark",
+                });
+            }
+
 
             setFinalAnswer('');
             setQuestion('');
             setSteps([{ step: '', hint: '' }]);
-            setPopupOpen(true);
         }
 
     };
 
-    const handleClosePopup = () => {
-        setPopupOpen(false);
-    };
 
     return (
         <div>

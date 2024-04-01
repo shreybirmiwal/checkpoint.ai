@@ -5,7 +5,7 @@ import { Home } from "./Pages/Home";
 import Login from "./Pages/Login";
 import SignUp from "./Pages/SignUp";
 import Dashboard from "./Pages/Dashboard";
-import CreateQuestion from "./Pages/CreateQuestion";
+import CreateQuestion from "./Components/CreateQuestion";
 
 function App() {
   return (

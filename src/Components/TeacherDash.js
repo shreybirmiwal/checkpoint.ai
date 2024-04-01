@@ -8,7 +8,7 @@ import { doc, updateDoc, getDoc, getDocs, collection } from 'firebase/firestore'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Modal from 'react-modal';
-import CreateQuestion from '../Pages/CreateQuestion';
+import CreateQuestion from './CreateQuestion';
 
 function TeacherDash() {
 
@@ -171,7 +171,7 @@ function TeacherDash() {
                                     Close
                                 </div>
 
-                                <CreateQuestion />
+                                <CreateQuestion teacherUID={user.uid} />
                             </Modal>
 
                         </div>
