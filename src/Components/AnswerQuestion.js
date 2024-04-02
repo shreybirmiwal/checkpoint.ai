@@ -16,11 +16,13 @@ import { addDoc, deleteField, doc, getDoc, setDoc, updateDoc } from "firebase/fi
 import { increment } from "firebase/firestore";
 import { collection } from "firebase/firestore";
 
-function AnswerQuestion({ questionID, closeModal, question }) {
+import { useParams } from "react-router-dom";
+
+function AnswerQuestion() {
+    let { id } = useParams();
+
     const [steps, setSteps] = useState([]);
     const [finalAnswer, setFinalAnswer] = useState('');
-
-
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -34,7 +36,7 @@ function AnswerQuestion({ questionID, closeModal, question }) {
         <div>
 
             <div className="max-w  p-6 bg-gray-200 shadow-md rounded-md">
-                <h1 className="text-2xl font-bold mb-4">{question}</h1>
+                <h1 className="text-2xl font-bold mb-4">{id}</h1>
                 <form onSubmit={handleSubmit} className="space-y-4">
 
                     <h2 className="text-lg font-semibold mb-2">Steps:</h2>
