@@ -12,7 +12,7 @@ import { AccordianOuter } from './AccordianOuter';
 
 import { db } from '../../firebase';
 import { doc, updateDoc, getDoc, getDocs, collection } from 'firebase/firestore';
-
+//
 
 function AnalyticsAssignments() {
     let { id } = useParams();
