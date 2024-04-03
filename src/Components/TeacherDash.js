@@ -55,8 +55,8 @@ function TeacherDash() {
                 querySnapshot.forEach((doc) => {
                     const data = doc.data();
                     if (data.Teacher === user.uid) {
-                        const truncatedTitle = data.Question.length > 40 ? data.Question.slice(0, 40) + '...' : data.Question;
-                        titles.push(truncatedTitle);
+                        //const truncatedTitle = data.Question.length > 40 ? data.Question.slice(0, 40) + '...' : data.Question;
+                        titles.push(data.Question);
                         assignmentIds.push(doc.id);
                     }
                 });
