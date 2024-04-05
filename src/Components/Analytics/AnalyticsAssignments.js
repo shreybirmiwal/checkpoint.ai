@@ -57,8 +57,9 @@ function AnalyticsAssignments() {
         if (dataDoc.exists()) {
             console.log("Document data:", dataDoc.data());
             setCommonMistakes(dataDoc.data().CommonMistakes);
-            setProficiency(dataDoc.data().Proficiency);
-            setStudentRes(dataDoc.data().StudentRes);
+            //setProficiency(dataDoc.data().Proficiency);
+            // setStudentRes(dataDoc.data().StudentRes);
+            // console.log(dataDoc.data().StudentRes)
         }
     }
 
@@ -148,7 +149,7 @@ function AnalyticsAssignments() {
                 </div>
 
                 <div className='bg-gray-200 rounded-xl p-3 mt-5'>
-                    <AccordianOuter common_mistakes={common_mistakes} studentRes={studentRes} />
+                    <AccordianOuter common_mistakes={common_mistakes} />
                 </div>
 
             </div>

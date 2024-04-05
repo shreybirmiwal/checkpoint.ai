@@ -5,7 +5,7 @@ import {
     AccordionBody,
 } from "@material-tailwind/react";
 
-export function AccordianOuter({ common_mistakes, studentRes }) {
+export function AccordianOuter({ common_mistakes }) {
     const [open, setOpen] = React.useState();
 
     const handleOpen = (value) => setOpen(open === value ? 0 : value);
@@ -27,7 +27,13 @@ export function AccordianOuter({ common_mistakes, studentRes }) {
             <Accordion open={open === 2} >
                 <AccordionHeader className='font-bold text-xl text-purple-600 underline mb-2' onClick={() => handleOpen(2)}>Student results</AccordionHeader>
                 <AccordionBody>
-
+                    {/* {studentRes.map((mistake, index) => (
+                        <Accordion key={index}>
+                            <AccordionHeader className="text-sm">
+                                {mistake}
+                            </AccordionHeader>
+                        </Accordion>
+                    ))} */}
                 </AccordionBody>
             </Accordion>
             <Accordion open={open === 3} >
