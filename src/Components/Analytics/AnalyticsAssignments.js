@@ -54,6 +54,10 @@ function AnalyticsAssignments() {
         }
     }
 
+    const genData = async () => {
+
+    }
+
 
     return (
         <div className="bg-purple-200 h-screen flex flex-col justify-center">
@@ -65,6 +69,13 @@ function AnalyticsAssignments() {
                 <h2 className="text-3xl font-semibold mb-4">Assignment Analytics</h2>
                 ID: {id}
 
+                <div className='bg-blue-400 rounded-xl p-3 mt-5 w-80 hover:bg-blue-500' onClick={() => {
+                    genData();
+                    window.location.reload();
+                }}>
+                    Generate updated analytics (computationally heavy)
+                </div>
+
                 <div className='bg-gray-200 rounded-xl p-3 mt-5'>
                     <AccordianOuter common_mistakes={common_mistakes} />
                 </div>
@@ -72,7 +83,7 @@ function AnalyticsAssignments() {
             </div>
             <ToastContainer />
 
-        </div>
+        </div >
     );
 
 }
