@@ -1,31 +1,35 @@
 import React, { useState } from 'react';
-
-import {
-    Button,
-    Dialog,
-    DialogHeader,
-    DialogBody,
-    DialogFooter,
-} from "@material-tailwind/react";
-
+import { Button, Dialog, DialogHeader, DialogBody, DialogFooter } from "@material-tailwind/react";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-
-import { db } from '../firebase';
-import { addDoc, deleteField, doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
-import { increment } from "firebase/firestore";
-import { collection } from "firebase/firestore";
 import { Nav } from './Nav';
 import { useParams } from "react-router-dom";
 import { useNavigate } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
 
+import { db } from '../firebase';
+import { doc, updateDoc, getDoc, getDocs, collection } from 'firebase/firestore';
+
 function AnswerQuestion() {
-
     let { id } = useParams();
-
     const navigate = useNavigate();
     let { state } = useLocation();
+
+    const [correctQuestion, setCorrectQuestion] = useState('');
+    const [correctAnswer, setCorrectAnswer] = useState('');
+    const [correctSteps, setCorrectSteps] = useState(['']);
+
+    const getCorrectData = async () => {
+        const assingedRef = doc(db, "Teacher", id);
+        const assignedSnap = await getDoc(assingedRef);
+        if (assignedSnap.exists()) {
+            console.log("Document data:", assignedSnap.data());
+            setCorrectAnswer(assignedSnap.data().Answer);
+            setCorrectQuestion(assignedSnap.data().Question);
+            setCorrectSteps(assignedSnap.data().Steps);
+        }
+    }
+
 
 
     const [steps, setSteps] = useState(['']);
@@ -36,12 +40,9 @@ function AnswerQuestion() {
     };
 
     const handleDeleteStep = (index) => {
-        if (steps.length === 1) {
-            return; // Prevent deletion if only one step remains
+        if (steps.length > 1) {
+            setSteps(prevSteps => prevSteps.filter((_, i) => i !== index));
         }
-        const updatedSteps = [...steps];
-        updatedSteps.splice(index, 1);
-        setSteps(updatedSteps);
     };
 
     const handleSubmit = async (e) => {
@@ -50,7 +51,32 @@ function AnswerQuestion() {
         console.log(steps)
         console.log(finalAnswer)
 
-        console.log(state)
+
+        if (finalAnswer !== '' && steps.every(step => step !== '')) {
+            toast.success("Joined class successfully!", {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "dark",
+            });
+        }
+        else {
+            toast.error("Please fill all fields!", {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "dark",
+            });
+            return;
+        }
     };
 
     return (
@@ -61,49 +87,41 @@ function AnswerQuestion() {
             <div className="h-full container mx-auto mt-8">
                 <div className="max-w  p-6 bg-gray-200 shadow-md rounded-md">
                     <div className='hover:text-purple-700 flex flex-row mb-2' onClick={() => navigate("/dashboard")}>
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-6 h-6">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
                         </svg>
                         Close
                     </div>
-                    {/* <h1 className="text-2xl font-bold mb-4">{id}</h1> */}
                     <h1 className="text-2xl font-bold mb-4">{state.key.title}</h1>
 
                     <form onSubmit={handleSubmit} className="space-y-4">
-
                         <h2 className="text-lg font-semibold mb-2">Steps:</h2>
 
-                        <div className=' overflow-y-scroll h-60'>
-                            {steps.map((step, index) => (
-                                <div key={index} className="mb-4 grid grid-cols-5">
-                                    <label className="block mb-1" >Step {index + 1}</label>
+                        {steps.map((step, index) => (
+                            <div key={index} className="mb-4 flex items-center">
+                                <label className="mr-2">Step {index + 1}:</label>
+                                <input
+                                    type="text"
+                                    className="flex-grow px-3 py-2 border rounded-md focus:outline-none focus:border-blue-500"
+                                    value={step}
+                                    onChange={(e) => {
+                                        const updatedSteps = [...steps];
+                                        updatedSteps[index] = e.target.value;
+                                        setSteps(updatedSteps);
+                                    }}
+                                />
 
-                                    <input
-                                        type="text"
-                                        className="w-full px-3 py-2 border rounded-md focus:outline-none focus:border-blue-500 col-span-3"
-                                        value={step}
-                                        onChange={(e) => {
-                                            const updatedSteps = [...steps];
-                                            updatedSteps[index] = e.target.value;
-                                            setSteps(updatedSteps);
-                                        }}
-                                    />
+                                {steps.length > 1 && (
+                                    <button type="button" className="ml-2 text-red-600" onClick={() => handleDeleteStep(index)}>
+                                        Delete Step
+                                    </button>
+                                )}
+                            </div>
+                        ))}
 
-                                    {index === steps.length - 1 && (
-                                        <>
-                                            <button type="button" className="text-blue-500" onClick={handleAddStep}>
-                                                Add Step
-                                            </button>
-
-                                            <button type="button" className="text-red-600" onClick={() => handleDeleteStep(index)}>
-                                                Delete Step
-                                            </button>
-                                        </>
-                                    )}
-                                </div>
-                            ))}
-
-                        </div>
+                        <button type="button" className="text-blue-500" onClick={handleAddStep}>
+                            Add Step
+                        </button>
 
                         <div className="grid-cols-2">
                             <label className="block mb-2" htmlFor="finalAnswer">Final Answer:</label>
@@ -123,7 +141,7 @@ function AnswerQuestion() {
                 </div>
                 <ToastContainer />
             </div>
-        </div >
+        </div>
     );
 }
 
