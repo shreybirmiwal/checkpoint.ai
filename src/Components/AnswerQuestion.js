@@ -10,9 +10,10 @@ import { useNavigate } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
 
 import { db } from '../firebase';
-import { doc, updateDoc, getDoc, getDocs, collection } from 'firebase/firestore';
+import { doc, updateDoc, getDoc, getDocs, collection, FieldValue, arrayUnion } from 'firebase/firestore';
 import Modal from 'react-modal';
-
+import { getAuth } from "firebase/auth";
+import { onAuthStateChanged } from "firebase/auth";
 import OpenAI from 'openai';
 
 
@@ -23,7 +24,8 @@ function AnswerQuestion() {
         dangerouslyAllowBrowser: true
         , // This is the default and can be omitted
     });
-
+    const auth = getAuth();
+    const [user, setUser] = useState(null)
 
     let { id } = useParams();
     const navigate = useNavigate();
@@ -36,6 +38,20 @@ function AnswerQuestion() {
     const [ready, setReady] = useState(false)
 
     const [mistakes, setMistakes] = useState([]);
+
+    useEffect(() => {
+        const unsubscribe = onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                setUser(user);
+                const uid = user.uid;
+
+            } else {
+                navigate("/signup");
+            }
+        });
+
+        return unsubscribe;
+    }, [auth, navigate]);
 
     const handleAddStep = () => {
         setSteps([...steps, '']);
@@ -126,12 +142,17 @@ Student answer: ${finalAnswer}`;
                 console.log("Mistakes:", response.mistakes);
 
 
-                await updateDoc(doc(db, "Stats", id), {
-                    CommonMistakes: response.mistakes,
-                    StudentRes: finalAnswer,
-                    allMistakes: response.mistakes,
-                })
-                setReady(true)
+                await Promise.all([
+                    updateDoc(doc(db, "Stats", id), {
+                        allMistakes: arrayUnion(...response.mistakes),
+                    }),
+                    updateStudentRes(id, user.uid, response.mistakes),
+
+                ]).then(() => {
+                    setReady(true);
+                }).catch(error => {
+                    console.error("Error updating document:", error);
+                });
 
 
                 setMistakes(response.mistakes)
@@ -145,6 +166,25 @@ Student answer: ${finalAnswer}`;
             });
     }
 
+
+
+
+    async function updateStudentRes(id, uid, newMistakes) {
+        const docRef = doc(db, "Stats", id);
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+            const existingStudentRes = docSnap.data().StudentRes || {};
+            const updatedStudentRes = {
+                ...existingStudentRes,
+                [uid]: arrayUnion(...newMistakes)
+            };
+
+            await updateDoc(docRef, { StudentRes: updatedStudentRes });
+        } else {
+            console.error("Document not found");
+        }
+    }
 
 
 
