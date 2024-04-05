@@ -15,7 +15,7 @@ export default function Hero() {
                                     <div class="absolute top-0 rounded-full bg-violet-300 -left-4 w-96 h-96 animate-blob"></div>
 
                                     <div class="relative">
-                                        <img class="object-cover object-center mx-auto rounded-lg  image-large" alt="hero" src="/home2.png" style={{ width: "200%", height: "auto" }} />
+                                        <img class="object-cover object-center mx-auto rounded-lg  image-large" alt="hero" src="/home2.png" width="2432" height="1442" />
                                     </div>
 
                                 </div>
