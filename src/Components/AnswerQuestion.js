@@ -12,7 +12,16 @@ import { useLocation } from 'react-router-dom';
 import { db } from '../firebase';
 import { doc, updateDoc, getDoc, getDocs, collection } from 'firebase/firestore';
 
+import OpenAI from 'openai';
+
+
 function AnswerQuestion() {
+
+    const openai = new OpenAI({
+        apiKey: process.env['OPENAI_API_KEY'], // This is the default and can be omitted
+    });
+
+
     let { id } = useParams();
     const navigate = useNavigate();
     let { state } = useLocation();
