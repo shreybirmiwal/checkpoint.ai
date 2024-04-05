@@ -16,6 +16,7 @@ import { getAuth } from "firebase/auth";
 import { onAuthStateChanged } from "firebase/auth";
 import OpenAI from 'openai';
 
+import { deleteField } from 'firebase/firestore';
 
 function AnswerQuestion() {
 
@@ -79,6 +80,20 @@ function AnswerQuestion() {
         },
     };
 
+    const moveAssignmentToCompleted = async () => {
+        try {
+            // Construct the reference to the document in the collection
+            const studentDocumentRef = doc(db, "Students", user.uid);
+
+            // Update the document to remove the assignment from "Assigned" and add it to "Completed"
+            await updateDoc(studentDocumentRef, {
+                [`Assigned.${id}`]: deleteField(),
+                [`Completed.${id}`]: "test" // You can set any value here, like a timestamp
+            });
+        } catch (error) {
+            console.error("Error moving assignment to completed:", error);
+        }
+    };
 
     const gptPart = async (prompt) => {
         const assingedRef = doc(db, "Teacher", id);
@@ -97,11 +112,9 @@ function AnswerQuestion() {
             console.log(correctSteps)
         }
 
-        const steps = ['Step 1: Write the equation.', 'Step 2: Calculate the pOH.', 'Step 3: Use the pOH to find pH.'];
-        const finalAnswer = 'Final Answer';
-
         const formattedCorrectSteps = correctSteps.map((step, index) => `${index + 1}) ${step.step}\n   Hint: ${step.hint ? step.hint : 'None'}`).join('\n');
         const formattedStudentSteps = steps.map((step, index) => `${index + 1}) ${step}`).join('\n');
+        console.log("THIS IS THE STUDENT STEPS " + formattedStudentSteps)
 
         const jsonOutput = JSON.stringify({
             Accuracy: "% Accuracy of student",
@@ -150,10 +163,7 @@ Student answer: ${finalAnswer}`;
 
 
                     //remove pendign assignemnt, add it to completed assignments
-                    updateDoc(doc(db, "Students", user.uid), {
-                        Assigned: arrayRemove(id),
-                        Completed: arrayUnion(id)
-                    })
+                    // moveAssignmentToCompleted()
 
                 ]).then(() => {
                     setReady(true);
