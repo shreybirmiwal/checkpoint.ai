@@ -10,7 +10,7 @@ import { useNavigate } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
 
 import { db } from '../firebase';
-import { doc, updateDoc, getDoc, getDocs, collection, FieldValue, arrayUnion } from 'firebase/firestore';
+import { doc, updateDoc, getDoc, getDocs, collection, FieldValue, arrayUnion, arrayRemove } from 'firebase/firestore';
 import Modal from 'react-modal';
 import { getAuth } from "firebase/auth";
 import { onAuthStateChanged } from "firebase/auth";
@@ -108,7 +108,7 @@ function AnswerQuestion() {
             mistakes: ["STUDENTMISTAKE1", "STUDENTMISTAKE2"]
         });
 
-        const promptText = `Given the question, correct steps, and correct answer, a student's potentially incorrect steps and final answer, determine the student's mistakes. Be specific in the mistake. (There may be multiple mistakes or zero mistakes)
+        const promptText = `Given the question, correct steps, and correct answer, a student's potentially incorrect steps and final answer, determine the student's mistakes. Be very specific in the mistake and include the numbers/calculations that where incorrect. (There may be multiple mistakes or zero mistakes)
 
 Return in JSON format:
 ${jsonOutput}
@@ -147,6 +147,13 @@ Student answer: ${finalAnswer}`;
                         allMistakes: arrayUnion(...response.mistakes),
                     }),
                     updateStudentRes(id, user.uid, response.mistakes),
+
+
+                    //remove pendign assignemnt, add it to completed assignments
+                    updateDoc(doc(db, "Students", user.uid), {
+                        Assigned: arrayRemove(id),
+                        Completed: arrayUnion(id)
+                    })
 
                 ]).then(() => {
                     setReady(true);

@@ -1,6 +1,6 @@
 Promt:
 
-Given the question, correct steps, and correct answer, a student's potentially incorrect steps and final answer, determine the student's mistakes. Be specific in the mistake. (There may be multiple mistakes or zero mistakes)
+Given the question, correct steps, and correct answer, a student's potentially incorrect steps and final answer, determine the student's mistakes. Be very specific in the mistake and include the numbers/calculations that where incorrect. (There may be multiple mistakes or zero mistakes)
 
 
           Return in JSON format:
