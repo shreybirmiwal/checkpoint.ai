@@ -176,7 +176,8 @@ const StudentDash = () => {
                 </div>
                 <div className='overflow-y-scroll h-96'>
                     {tab === 0 && assignmentsTitle.map((title, index) => (
-                        <div key={index} className="bg-white rounded-lg shadow-md p-10 mb-3 hover:bg-gray-200" onClick={handleClickAssignment}>
+                        <div key={index} className="bg-white rounded-lg shadow-md p-10 mb-3 hover:bg-gray-200" onClick={() => navigate("/answer/" + assignmentsID[index], { state: { key: { title } } })}>
+
                             <p>{title.length > 40 ? title.slice(0, 40) + '...' : title}</p>
                         </div>
 
@@ -188,20 +189,6 @@ const StudentDash = () => {
                     ))}
                 </div>
             </div>
-
-            <Modal
-                isOpen={modalIsOpen}
-                onRequestClose={toggleModal}
-                style={modalStyle}
-            >
-                <div className='hover:text-purple-700 flex flex-row mb-2' onClick={toggleModal}>
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
-                    </svg>
-                    Close
-                </div>
-                <AnswerQuestion closeModal={toggleModal} question={clickedQuestion} questionID={clickedQuestionID} />
-            </Modal>
 
             <ToastContainer />
 

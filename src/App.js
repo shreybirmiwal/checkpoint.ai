@@ -7,6 +7,7 @@ import SignUp from "./Pages/SignUp";
 import Dashboard from "./Pages/Dashboard";
 import AnalyticsStudents from "./Components/Analytics/AnalyticsStudents";
 import AnalyticsAssignments from "./Components/Analytics/AnalyticsAssignments";
+import AnswerQuestion from "./Components/AnswerQuestion";
 
 function App() {
   return (
@@ -20,6 +21,8 @@ function App() {
 
         <Route path="/analytics/students/:id" element={<AnalyticsStudents />} />
         <Route path="/analytics/assignments/:id" element={<AnalyticsAssignments />} />
+
+        <Route path="/answer/:id" element={<AnswerQuestion />} />
 
       </Routes>
     </Router>
