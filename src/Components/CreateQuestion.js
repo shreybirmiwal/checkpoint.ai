@@ -146,7 +146,8 @@ function CreateQuestion({ teacherUID, closeModal }) {
             await setDoc(doc(db, "Stats", questionID), {
                 CommonMistakes: [],
                 Proficiency: 0,
-                StudentRes: {}
+                StudentRes: {},
+                allMistakes: []
             });
 
 

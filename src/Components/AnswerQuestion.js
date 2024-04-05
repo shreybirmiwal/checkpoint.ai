@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+import React, {
+    useState, useEffect
+} from 'react';
 import { Button, Dialog, DialogHeader, DialogBody, DialogFooter } from "@material-tailwind/react";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -31,6 +33,10 @@ function AnswerQuestion() {
     }
 
 
+    useEffect(() => {
+        getCorrectData();
+    }, []);
+
 
     const [steps, setSteps] = useState(['']);
     const [finalAnswer, setFinalAnswer] = useState('');
@@ -53,16 +59,12 @@ function AnswerQuestion() {
 
 
         if (finalAnswer !== '' && steps.every(step => step !== '')) {
-            toast.success("Joined class successfully!", {
-                position: "top-right",
-                autoClose: 5000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: "dark",
-            });
+
+            //show analysis modal
+            //upload data to stats
+
+
+
         }
         else {
             toast.error("Please fill all fields!", {
