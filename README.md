@@ -102,3 +102,18 @@ Student answer: ${finalAnswer}`;
 }
 
 
+
+
+
+sneak peak of my next app 
+
+allows teachers to use ai to grade/analyze homework:
+"common mistakes.."
+"skipped steps.."
+
+Here's a real output:
+"The student did not create a rice table to account for the 1:2 ratio of Sr(OH)2 to OH-."
+
+heavy inspiration 
+@edpuzzle
+ #buildinpublic
