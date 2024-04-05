@@ -9,12 +9,20 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { AccordianOuter } from './AccordianOuter';
 
-
+import OpenAI from 'openai';
 import { db } from '../../firebase';
 import { doc, updateDoc, getDoc, getDocs, collection } from 'firebase/firestore';
 //
 
 function AnalyticsAssignments() {
+
+    const client = new OpenAI({
+        apiKey: process.env['REACT_APP_OPENAI_API_KEY'],
+        dangerouslyAllowBrowser: true
+        , // This is the default and can be omitted
+    });
+
+
     let { id } = useParams();
     const [user, setUser] = useState(null);
     const auth = getAuth();
@@ -54,6 +62,73 @@ function AnalyticsAssignments() {
         }
     }
 
+    const gptPart = async (data) => {
+
+
+        const jsonOutput = JSON.stringify({
+            commonMistakes: ["COMMONMISTAKE1", "COMMONMISTAKE2"]
+        });
+
+        const promptText = `I am a teacher and you are my AI teacher assistant. Given a list of mistakes that my students are making, return a simplified, abstracted, arraylist of mistakes that my students are making. Try to simplify as much as possible, by combining similar mistakes. Post the top 3 mistakes
+        
+        Return in JSON format:
+        ${jsonOutput}
+
+        List of mistakes: ${data}`;
+
+        console.log(promptText)
+
+        client.chat.completions
+            .create({
+                model: "gpt-3.5-turbo",
+                messages: [
+                    {
+                        role: "system",
+                        content: promptText,
+                    }
+                ],
+            })
+            .then(async (data) => {
+                console.log(data.choices[0].message.content);
+                const response = JSON.parse(data.choices[0].message.content);
+                // Accessing the data
+                console.log("Common MISTAKES:", response.commonMistakes);
+
+
+                updateDoc(doc(db, "Stats", id),
+                    { CommonMistakes: response.commonMistakes }
+                ).then(() => {
+                    toast.success("Updated analytics successfully!");
+                    getData();
+                }).catch((error) => {
+                    console.error("Error updating document: ", error);
+                    toast.error("Error updating analytics!");
+                });
+
+
+
+
+                return response.commonMistakes
+
+
+            });
+    }
+
+
+    const genData = async () => {
+
+        await getDoc(doc(db, "Stats", id)).then((docSnap) => {
+            if (docSnap.exists()) {
+                console.log("Document data:", docSnap.data());
+                const data = docSnap.data().allMistakes;
+
+                gptPart(data)
+
+
+            }
+        })
+    }
+
 
     return (
         <div className="bg-purple-200 h-screen flex flex-col justify-center">
@@ -65,14 +140,21 @@ function AnalyticsAssignments() {
                 <h2 className="text-3xl font-semibold mb-4">Assignment Analytics</h2>
                 ID: {id}
 
+                <div className='bg-blue-400 rounded-xl p-3 mt-5 w-80 hover:bg-blue-500' onClick={() => {
+                    genData();
+                    //window.location.reload();
+                }}>
+                    Generate updated analytics (computationally heavy)
+                </div>
+
                 <div className='bg-gray-200 rounded-xl p-3 mt-5'>
-                    <AccordianOuter common_mistakes={common_mistakes} />
+                    <AccordianOuter common_mistakes={common_mistakes} studentRes={studentRes} />
                 </div>
 
             </div>
             <ToastContainer />
 
-        </div>
+        </div >
     );
 
 }
