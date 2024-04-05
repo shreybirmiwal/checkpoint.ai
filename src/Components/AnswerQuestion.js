@@ -11,6 +11,7 @@ import { useLocation } from 'react-router-dom';
 
 import { db } from '../firebase';
 import { doc, updateDoc, getDoc, getDocs, collection } from 'firebase/firestore';
+import Modal from 'react-modal';
 
 import OpenAI from 'openai';
 
@@ -32,6 +33,10 @@ function AnswerQuestion() {
     const [steps, setSteps] = useState(['']);
     const [finalAnswer, setFinalAnswer] = useState('');
 
+    const [ready, setReady] = useState(false)
+
+    const [mistakes, setMistakes] = useState([]);
+
     const handleAddStep = () => {
         setSteps([...steps, '']);
     };
@@ -41,6 +46,23 @@ function AnswerQuestion() {
             setSteps(prevSteps => prevSteps.filter((_, i) => i !== index));
         }
     };
+
+
+    const [modalIsOpen, setIsOpen] = React.useState(false);
+    const toggleModal = () => {
+        setIsOpen(!modalIsOpen)
+    };
+    const modalStyle = {
+        content: {
+            top: '10%',
+            left: '25%',
+
+            width: '50%',
+            height: '80%',
+            background: '#CE93D8',
+        },
+    };
+
 
     const gptPart = async (prompt) => {
         const assingedRef = doc(db, "Teacher", id);
@@ -97,11 +119,29 @@ Student answer: ${finalAnswer}`;
                     }
                 ],
             })
-            .then((data) => {
+            .then(async (data) => {
                 const response = JSON.parse(data.choices[0].message.content);
                 // Accessing the data
                 console.log("Accuracy:", response.Accuracy);
                 console.log("Mistakes:", response.mistakes);
+
+
+                await updateDoc(doc(db, "Stats", id), {
+                    CommonMistakes: response.mistakes,
+                    StudentRes: finalAnswer,
+                    allMistakes: response.mistakes,
+                })
+                setReady(true)
+
+
+                setMistakes(response.mistakes)
+
+                toggleModal()
+
+
+
+                //update the firebase
+
             });
     }
 
@@ -151,7 +191,6 @@ Student answer: ${finalAnswer}`;
                         </svg>
                         Close
                     </div>
-                    <h1 className="text-2xl font-bold mb-4">{state.key.title}</h1>
 
                     <form onSubmit={handleSubmit} className="space-y-4">
                         <h2 className="text-lg font-semibold mb-2">Steps:</h2>
@@ -199,6 +238,33 @@ Student answer: ${finalAnswer}`;
                     </form>
                 </div>
                 <ToastContainer />
+
+                <Modal
+                    isOpen={modalIsOpen}
+                    onRequestClose={toggleModal}
+                    style={modalStyle}
+                    contentLabel="Example Modal"
+                >
+                    {mistakes.map((Mistake, index) => (
+                        <div key={index}>
+
+                            <p>{Mistake}</p>
+
+                        </div>
+                    ))}
+
+                    {ready ?
+                        <div className='bg-blue-300 p-4' onClick={() => navigate('/dashboard')}>
+                            Continue
+                        </div>
+                        :
+                        <div>Loading...</div>
+                    }
+
+
+                </Modal>
+
+
             </div>
         </div>
     );
