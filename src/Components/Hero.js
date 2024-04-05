@@ -1,7 +1,51 @@
-import React from "react";
+import React, { useState } from "react";
 import Nav from "./Nav";
+import { ToastContainer, toast } from 'react-toastify';
+import { db } from '../firebase';
+import { arrayUnion } from "firebase/firestore";
+import 'react-toastify/dist/ReactToastify.css';
+import { doc, updateDoc, getDoc } from 'firebase/firestore';
+
 
 export default function Hero() {
+    const [email, setEmail] = useState('');
+
+    const handleEmailChange = (event) => {
+        setEmail(event.target.value);
+    };
+
+    const handleJoinMailingList = () => {
+        // Here you can add logic to store the email in Firebase
+        console.log('Email:', email);
+
+        updateDoc(doc(db, "waitlist", "emails"), {
+            data: arrayUnion(email)
+        })
+
+        if (email != '') {
+            toast.success("Joined waitlist successfully!", {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "dark",
+            });
+        } else {
+            toast.error("Failed to join waitlist. Please try again.", {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "dark",
+            });
+        }
+    };
 
     return (
         <div className="w-full h-full">
@@ -31,19 +75,26 @@ export default function Hero() {
 
                             <div class="mt-0 lg:mt-6 max-w-7xl sm:flex">
                                 <div class="mt-3 rounded-lg sm:mt-0">
-                                    <a href="/dashboard">
-
-                                        <button class="items-center block px-10 py-4 text-base font-medium text-center text-white transition duration-500 ease-in-out transform bg-blue-600 rounded-xl hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">Let's Start!</button>
-                                    </a>
+                                    <input
+                                        type="email"
+                                        value={email}
+                                        onChange={handleEmailChange}
+                                        placeholder="Enter your email"
+                                        class="block w-full px-4 py-3 text-base leading-6 text-gray-900 placeholder-gray-500 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                                    />
+                                    <button
+                                        onClick={handleJoinMailingList}
+                                        class="mt-3 items-center block px-10 py-4 text-base font-medium text-center text-white transition duration-500 ease-in-out transform bg-blue-600 rounded-xl hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                                    >
+                                        Join waitlist
+                                    </button>
                                 </div>
-
                             </div>
                         </div>
                     </div>
                 </div>
             </section>
-
-
+            <ToastContainer />
         </div>
     );
 }
