@@ -302,23 +302,29 @@ Student answer: ${finalAnswer}`;
                     style={modalStyle}
                     contentLabel="Example Modal"
                 >
-                    {mistakes.map((Mistake, index) => (
-                        <div key={index}>
+                    <div className="text-center"> {/* Center align content */}
+                        {mistakes.map((mistake, index) => (
+                            <div key={index} className="bg-white rounded-lg shadow-md p-4 mb-4">
+                                <p className="text-black">{mistake}</p> {/* Set text color to black */}
+                            </div>
+                        ))}
+                        <div className="mt-auto text-center"> {/* Position button at the bottom */}
+                            {ready ? (
+                                <div
+                                    className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded cursor-pointer transition duration-300"
 
-                            <p>{Mistake}</p>
-
+                                    //className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded cursor-pointer transition duration-300 inline-block"
+                                    onClick={() => navigate('/dashboard')}
+                                >
+                                    Continue
+                                </div>
+                            ) : (
+                                <div className="bg-gray-200 text-gray-600 py-2 px-4 rounded cursor-not-allowed inline-block">
+                                    Loading...
+                                </div>
+                            )}
                         </div>
-                    ))}
-
-                    {ready ?
-                        <div className='bg-blue-300 p-4' onClick={() => navigate('/dashboard')}>
-                            Continue
-                        </div>
-                        :
-                        <div>Loading...</div>
-                    }
-
-
+                    </div>
                 </Modal>
 
 
