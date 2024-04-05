@@ -17,34 +17,16 @@ import OpenAI from 'openai';
 
 function AnswerQuestion() {
 
-    const openai = new OpenAI({
-        apiKey: process.env['OPENAI_API_KEY'], // This is the default and can be omitted
+    const client = new OpenAI({
+        apiKey: process.env['REACT_APP_OPENAI_API_KEY'],
+        dangerouslyAllowBrowser: true
+        , // This is the default and can be omitted
     });
 
 
     let { id } = useParams();
     const navigate = useNavigate();
     let { state } = useLocation();
-
-    const [correctQuestion, setCorrectQuestion] = useState('');
-    const [correctAnswer, setCorrectAnswer] = useState('');
-    const [correctSteps, setCorrectSteps] = useState(['']);
-
-    const getCorrectData = async () => {
-        const assingedRef = doc(db, "Teacher", id);
-        const assignedSnap = await getDoc(assingedRef);
-        if (assignedSnap.exists()) {
-            console.log("Document data:", assignedSnap.data());
-            setCorrectAnswer(assignedSnap.data().Answer);
-            setCorrectQuestion(assignedSnap.data().Question);
-            setCorrectSteps(assignedSnap.data().Steps);
-        }
-    }
-
-
-    useEffect(() => {
-        getCorrectData();
-    }, []);
 
 
     const [steps, setSteps] = useState(['']);
@@ -60,6 +42,72 @@ function AnswerQuestion() {
         }
     };
 
+    const gptPart = async (prompt) => {
+        const assingedRef = doc(db, "Teacher", id);
+        const assignedSnap = await getDoc(assingedRef);
+        var correctAnswer = '';
+        var correctQuestion = '';
+        var correctSteps = '';
+
+        if (assignedSnap.exists()) {
+            console.log("Document data:", assignedSnap.data());
+            correctAnswer = (assignedSnap.data().Answer);
+            correctQuestion = (assignedSnap.data().Question);
+            correctSteps = (assignedSnap.data().Steps);
+
+            console.log("OMG CORECT STPES BELOW")
+            console.log(correctSteps)
+        }
+
+        const steps = ['Step 1: Write the equation.', 'Step 2: Calculate the pOH.', 'Step 3: Use the pOH to find pH.'];
+        const finalAnswer = 'Final Answer';
+
+        const formattedCorrectSteps = correctSteps.map((step, index) => `${index + 1}) ${step.step}\n   Hint: ${step.hint ? step.hint : 'None'}`).join('\n');
+        const formattedStudentSteps = steps.map((step, index) => `${index + 1}) ${step}`).join('\n');
+
+        const jsonOutput = JSON.stringify({
+            Accuracy: "% Accuracy of student",
+            mistakes: ["STUDENTMISTAKE1", "STUDENTMISTAKE2"]
+        });
+
+        const promptText = `Given the question, correct steps, and correct answer, a student's potentially incorrect steps and final answer, determine the student's mistakes. Be specific in the mistake. (There may be multiple mistakes or zero mistakes)
+
+Return in JSON format:
+${jsonOutput}
+
+Question: ${correctQuestion}
+Correct steps:
+${formattedCorrectSteps}
+
+Correct answer:${correctAnswer}
+
+Student steps:
+${formattedStudentSteps}
+Student answer: ${finalAnswer}`;
+
+        console.log(promptText);
+
+        client.chat.completions
+            .create({
+                model: "gpt-3.5-turbo",
+                messages: [
+                    {
+                        role: "system",
+                        content: promptText,
+                    }
+                ],
+            })
+            .then((data) => {
+                const response = JSON.parse(data.choices[0].message.content);
+                // Accessing the data
+                console.log("Accuracy:", response.Accuracy);
+                console.log("Mistakes:", response.mistakes);
+            });
+    }
+
+
+
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         console.log("SUBMIT ")
@@ -71,7 +119,7 @@ function AnswerQuestion() {
 
             //show analysis modal
             //upload data to stats
-
+            gptPart("prompt");
 
 
         }
