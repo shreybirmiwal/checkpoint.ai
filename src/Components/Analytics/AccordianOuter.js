@@ -5,7 +5,7 @@ import {
     AccordionBody,
 } from "@material-tailwind/react";
 
-export function AccordianOuter({ common_mistakes }) {
+export function AccordianOuter({ common_mistakes, studentRes }) {
     const [open, setOpen] = React.useState();
 
     const handleOpen = (value) => setOpen(open === value ? 0 : value);

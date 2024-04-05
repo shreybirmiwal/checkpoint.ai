@@ -99,10 +99,13 @@ function AnalyticsAssignments() {
                     { CommonMistakes: response.commonMistakes }
                 ).then(() => {
                     toast.success("Updated analytics successfully!");
+                    getData();
                 }).catch((error) => {
                     console.error("Error updating document: ", error);
                     toast.error("Error updating analytics!");
                 });
+
+
 
 
                 return response.commonMistakes
@@ -120,6 +123,7 @@ function AnalyticsAssignments() {
                 const data = docSnap.data().allMistakes;
 
                 gptPart(data)
+
 
             }
         })
@@ -144,7 +148,7 @@ function AnalyticsAssignments() {
                 </div>
 
                 <div className='bg-gray-200 rounded-xl p-3 mt-5'>
-                    <AccordianOuter common_mistakes={common_mistakes} />
+                    <AccordianOuter common_mistakes={common_mistakes} studentRes={studentRes} />
                 </div>
 
             </div>
