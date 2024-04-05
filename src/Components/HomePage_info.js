@@ -11,8 +11,8 @@ export function HomePage_info() {
     const handleOpen = (value) => setOpen(open === value ? 0 : value);
 
     return (
-        <div className="mb-15 p-10 bg-gray-100 shadow-2xl rounded-xl">
-            <p className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl mb-10"> How is checkpoint.ai different from competitors?</p>
+        <div className="mb-15 p-10 bg-gray-100 shadow-2xlxl rounded-xl">
+            <p className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl mb-10"> How is checkpoint.ai different from other AI graders?</p>
             <Accordion open={open === 1}>
                 <AccordionHeader onClick={() => handleOpen(1)}>Checkpoint isn't just for essays.</AccordionHeader>
                 <AccordionBody>
@@ -32,7 +32,7 @@ export function HomePage_info() {
                     It's not a grader, it's a feedback tool with analytics.
                 </AccordionHeader>
                 <AccordionBody>
-                    Other ai graders grade for teachers. We provide feedback for students AND teachers, such as 'common mistakes', 'personalized feedback' and more.
+                    Other AI graders grade for teachers. We provide feedback for students AND teachers, such as 'common mistakes', 'personalized feedback' and more.
                 </AccordionBody>
             </Accordion>
             <div />

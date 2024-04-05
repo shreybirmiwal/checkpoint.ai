@@ -11,10 +11,10 @@ export function Home() {
                 <Nav />
             </div>
 
-            <div className="flex items-center justify-center flex-col  h-screen w-screen w-full">
+            <div className="flex items-center justify-center flex-col  h-screen">
                 <Hero />
             </div>
-            <div className="bg-gray-200 flex items-center justify-center flex-col  h-screen px-64">
+            <div className="bg-blue-400 flex items-center justify-center flex-col  h-screen px-64">
                 <HomePage_info />
             </div>
             <div className="bg-white flex items-center justify-center flex-col  h-screen">
