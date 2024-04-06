@@ -69,7 +69,7 @@ export function Nav() {
                 </a>
             </Typography>
 
-            {!user && (
+            {/* {!user && (
                 <>
                     <Typography
                         as="li"
@@ -142,7 +142,7 @@ export function Nav() {
                         </a>
                     </Typography>
                 </>
-            )}
+            )} */}
         </ul>
     );
 

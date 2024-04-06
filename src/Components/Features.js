@@ -1,6 +1,15 @@
 import React from 'react';
 
 function Features() {
+
+    return (
+        <div className=''>
+            <div className='p-72 flex items-center justify-center align-middle mt-30'>
+                <video src="Demo_checkpoint.mp4" controls className="rounded-xl shadow-xl ring-1 ring-gray-400/10 h-" />
+
+            </div>
+        </div>
+    )
     return (
         <div className="overflow-hidden bg-white py-24 sm:py-32">
             <div className="mx-auto max-w-7xl px-6 lg:px-8">
