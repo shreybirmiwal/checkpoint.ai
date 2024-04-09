@@ -35,7 +35,7 @@ function AnswerQuestion() {
 
     const [steps, setSteps] = useState(['']);
     const [finalAnswer, setFinalAnswer] = useState('');
-
+    const [question, setQuestion] = useState('');
     const [ready, setReady] = useState(false)
 
     const [mistakes, setMistakes] = useState([]);
@@ -45,6 +45,15 @@ function AnswerQuestion() {
             if (user) {
                 setUser(user);
                 const uid = user.uid;
+
+
+                //get the question
+                const assingedRef = doc(db, "Teacher", id);
+                const assignedSnap = await getDoc(assingedRef);
+                if (assignedSnap.exists()) {
+                    //console.log("Document data:", assignedSnap.data());
+                    setQuestion(assignedSnap.data().Question);
+                }
 
             } else {
                 navigate("/signup");
@@ -149,34 +158,38 @@ Student answer: ${finalAnswer}`;
                 ],
             })
             .then(async (data) => {
-                const response = JSON.parse(data.choices[0].message.content);
-                // Accessing the data
-                console.log("Accuracy:", response.Accuracy);
-                console.log("Mistakes:", response.mistakes);
+
+                try {
+                    const response = JSON.parse(data.choices[0].message.content);
+                    // Accessing the data
+                    console.log("Accuracy:", response.Accuracy);
+                    console.log("Mistakes:", response.mistakes);
 
 
-                await Promise.all([
-                    updateDoc(doc(db, "Stats", id), {
-                        allMistakes: arrayUnion(...response.mistakes),
-                    }),
-                    updateStudentRes(id, user.uid, response.mistakes),
+                    await Promise.all([
+                        updateDoc(doc(db, "Stats", id), {
+                            allMistakes: arrayUnion(...response.mistakes),
+                        }),
+                        updateStudentRes(id, user.uid, response.mistakes),
 
 
-                    //remove pendign assignemnt, add it to completed assignments
-                    // moveAssignmentToCompleted()
+                        //remove pendign assignemnt, add it to completed assignments
+                        // moveAssignmentToCompleted()
 
-                ]).then(() => {
-                    setReady(true);
-                }).catch(error => {
-                    console.error("Error updating document:", error);
-                });
-
-
-                setMistakes(response.mistakes)
-
-                toggleModal()
+                    ]).then(() => {
+                        setReady(true);
+                    }).catch(error => {
+                        console.error("Error updating document:", error);
+                    });
 
 
+                    setMistakes(response.mistakes)
+
+                    toggleModal()
+
+                } catch (error) {
+                    toast.error("Error processing data, please try again!", {});
+                }
 
                 //update the firebase
 
@@ -250,6 +263,8 @@ Student answer: ${finalAnswer}`;
                     </div>
 
                     <form onSubmit={handleSubmit} className="space-y-4">
+                        <h2 className="text-lg font-semibold mb-2">{question}</h2>
+
                         <h2 className="text-lg font-semibold mb-2">Steps:</h2>
 
                         {steps.map((step, index) => (
