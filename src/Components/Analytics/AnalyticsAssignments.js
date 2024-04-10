@@ -125,13 +125,18 @@ function AnalyticsAssignments() {
 
     const genData = async () => {
 
+
         await getDoc(doc(db, "Stats", id)).then((docSnap) => {
             if (docSnap.exists()) {
                 console.log("Document data:", docSnap.data());
+
                 const data = docSnap.data().allMistakes;
 
-                gptPart(data)
-
+                if (data == null || data.length == 0) {
+                    toast.error("No data to generate analytics!");
+                } else {
+                    gptPart(data)
+                }
 
             }
         })

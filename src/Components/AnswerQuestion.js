@@ -31,17 +31,16 @@ function AnswerQuestion() {
 
     let { id } = useParams();
     const navigate = useNavigate();
-    let { state } = useLocation();
-
+    const location = useLocation();
+    const { title } = location.state.key;
 
     const [steps, setSteps] = useState(['']);
     const [finalAnswer, setFinalAnswer] = useState('');
-    const [question, setQuestion] = useState('');
     const [ready, setReady] = useState(false)
-
     const [mistakes, setMistakes] = useState([]);
 
     useEffect(() => {
+        console.log("TITLE " + title)
         const unsubscribe = onAuthStateChanged(auth, async (user) => {
             if (user) {
                 setUser(user);
@@ -51,35 +50,31 @@ function AnswerQuestion() {
             }
         });
 
-        return () => unsubscribe();
+        return unsubscribe;
     }, [auth, navigate]);
 
-    useEffect(() => {
-        getLoadingData()
-    }, []
-    )
 
-    const getLoadingData = async () => {
-        try {
-            //get the question
-            console.log("START DATEA + ID :" + id);
+    // const getLoadingData = async () => {
+    //     try {
+    //         //get the question
+    //         console.log("START DATEA + ID :" + id);
 
-            if (id === undefined) return;
+    //         if (id === undefined) return;
 
-            const dataDoc = await getDoc(doc(db, "Teacher", id));
+    //         const dataDoc = await getDoc(doc(db, "Teacher", id));
 
-            if (dataDoc.exists()) {
-                console.log(dataDoc.data().Question)
-                setQuestion(dataDoc.data().Question);
-            } else {
-                // Handle case when the document does not exist
-                console.log("Document does not exist");
-            }
-        } catch (error) {
-            // Handle any errors that occurred during the execution of the function
-            console.error("Error in getLoadingData:", error);
-        }
-    }
+    //         if (dataDoc.exists()) {
+    //             console.log(dataDoc.data().Question)
+    //             setQuestion(dataDoc.data().Question);
+    //         } else {
+    //             // Handle case when the document does not exist
+    //             console.log("Document does not exist");
+    //         }
+    //     } catch (error) {
+    //         // Handle any errors that occurred during the execution of the function
+    //         console.error("Error in getLoadingData:", error);
+    //     }
+    // }
 
     const handleAddStep = () => {
         setSteps([...steps, '']);
@@ -238,8 +233,7 @@ Student answer: ${finalAnswer}`;
 
 
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
+    const handleSubmit = async () => {
         console.log("SUBMIT ")
         console.log(steps)
         console.log(finalAnswer)
@@ -353,8 +347,8 @@ Student answer: ${finalAnswer}`;
                         Close
                     </div>
 
-                    <form onSubmit={handleSubmit} className="space-y-4">
-                        {question && <h1 className="text-lg font-semibold mb-2">{question}</h1>}
+                    <div className="space-y-4">
+                        {title && <h1 className="text-lg font-semibold mb-2">{title}</h1>}
 
                         <div className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md" onClick={() => manageHint()}>
                             <h1> I'm stuck! (hint) </h1>
@@ -399,10 +393,10 @@ Student answer: ${finalAnswer}`;
                             />
                         </div>
 
-                        <button type="submit" className="bg-green-500 text-white px-4 py-2 rounded-md">
+                        <button onClick={handleSubmit} className="bg-green-500 text-white px-4 py-2 rounded-md">
                             Submit
                         </button>
-                    </form>
+                    </div>
                 </div>
                 <ToastContainer />
 
