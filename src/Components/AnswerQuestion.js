@@ -15,6 +15,7 @@ import Modal from 'react-modal';
 import { getAuth } from "firebase/auth";
 import { onAuthStateChanged } from "firebase/auth";
 import OpenAI from 'openai';
+//import swal from 'sweetalert';
 
 import { deleteField } from 'firebase/firestore';
 
@@ -45,25 +46,38 @@ function AnswerQuestion() {
             if (user) {
                 setUser(user);
                 const uid = user.uid;
-                getLoadingData()
-
             } else {
                 navigate("/signup");
             }
         });
 
         return () => unsubscribe();
-    }, [user, navigate, id]);
+    }, [auth, navigate]);
+
+    useEffect(() => {
+        getLoadingData()
+    }, []
+    )
 
     const getLoadingData = async () => {
-        //get the question
-        console.log("START DATEA + ID :" + id);
+        try {
+            //get the question
+            console.log("START DATEA + ID :" + id);
 
-        if (id === undefined) return;
-        const dataDoc = await getDoc(doc(db, "Teacher", id));
-        if (dataDoc.exists()) {
-            //console.log("Document data:", assignedSnap.data());
-            setQuestion(dataDoc.data().Question);
+            if (id === undefined) return;
+
+            const dataDoc = await getDoc(doc(db, "Teacher", id));
+
+            if (dataDoc.exists()) {
+                console.log(dataDoc.data().Question)
+                setQuestion(dataDoc.data().Question);
+            } else {
+                // Handle case when the document does not exist
+                console.log("Document does not exist");
+            }
+        } catch (error) {
+            // Handle any errors that occurred during the execution of the function
+            console.error("Error in getLoadingData:", error);
         }
     }
 
@@ -311,6 +325,7 @@ Student answer: ${finalAnswer}`;
                 try {
                     const response = JSON.parse(data.choices[0].message.content);
                     console.log("Hints:", response.Hint);
+                    //swal("Hint:", response.Hint);
 
                 } catch (error) {
                     toast.error("Error processing data, please try again!", {});
@@ -335,11 +350,11 @@ Student answer: ${finalAnswer}`;
                     </div>
 
                     <form onSubmit={handleSubmit} className="space-y-4">
-                        <h2 className="text-lg font-semibold mb-2">{question}</h2>
-
+                        {question && <h1 className="text-lg font-semibold mb-2">{question}</h1>}
+                        {/* 
                         <div className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md" onClick={() => manageHint()}>
                             <h1> I'm stuck! (hint) </h1>
-                        </div>
+                        </div> */}
 
                         <h2 className="text-lg font-semibold mb-2">Steps:</h2>
 
