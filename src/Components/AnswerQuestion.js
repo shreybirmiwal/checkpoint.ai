@@ -15,7 +15,7 @@ import Modal from 'react-modal';
 import { getAuth } from "firebase/auth";
 import { onAuthStateChanged } from "firebase/auth";
 import OpenAI from 'openai';
-//import swal from 'sweetalert';
+import swal from 'sweetalert';
 
 import { deleteField } from 'firebase/firestore';
 
@@ -325,7 +325,7 @@ Student answer: ${finalAnswer}`;
                 try {
                     const response = JSON.parse(data.choices[0].message.content);
                     console.log("Hints:", response.Hint);
-                    //swal("Hint:", response.Hint);
+                    swal("Hint:", response.Hint);
 
                 } catch (error) {
                     toast.error("Error processing data, please try again!", {});
@@ -351,10 +351,10 @@ Student answer: ${finalAnswer}`;
 
                     <form onSubmit={handleSubmit} className="space-y-4">
                         {question && <h1 className="text-lg font-semibold mb-2">{question}</h1>}
-                        {/* 
+
                         <div className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md" onClick={() => manageHint()}>
                             <h1> I'm stuck! (hint) </h1>
-                        </div> */}
+                        </div>
 
                         <h2 className="text-lg font-semibold mb-2">Steps:</h2>
 
