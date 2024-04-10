@@ -45,23 +45,27 @@ function AnswerQuestion() {
             if (user) {
                 setUser(user);
                 const uid = user.uid;
-
-
-                //get the question
-                const assingedRef = doc(db, "Teacher", id);
-                const assignedSnap = await getDoc(assingedRef);
-                if (assignedSnap.exists()) {
-                    //console.log("Document data:", assignedSnap.data());
-                    setQuestion(assignedSnap.data().Question);
-                }
+                getLoadingData()
 
             } else {
                 navigate("/signup");
             }
         });
 
-        return unsubscribe;
-    }, [auth, navigate]);
+        return () => unsubscribe();
+    }, [user, navigate, id]);
+
+    const getLoadingData = async () => {
+        //get the question
+        console.log("START DATEA + ID :" + id);
+
+        if (id === undefined) return;
+        const dataDoc = await getDoc(doc(db, "Teacher", id));
+        if (dataDoc.exists()) {
+            //console.log("Document data:", assignedSnap.data());
+            setQuestion(dataDoc.data().Question);
+        }
+    }
 
     const handleAddStep = () => {
         setSteps([...steps, '']);
@@ -248,6 +252,74 @@ Student answer: ${finalAnswer}`;
         }
     };
 
+    const manageHint = async () => {
+        console.log("Student is asking for a hint")
+
+        const assingedRef = doc(db, "Teacher", id);
+        const assignedSnap = await getDoc(assingedRef);
+        var correctAnswer = '';
+        var correctQuestion = '';
+        var correctSteps = '';
+
+        if (assignedSnap.exists()) {
+            console.log("Document data:", assignedSnap.data());
+            correctAnswer = (assignedSnap.data().Answer);
+            correctQuestion = (assignedSnap.data().Question);
+            correctSteps = (assignedSnap.data().Steps);
+
+            console.log("OMG CORECT STPES BELOW")
+            console.log(correctSteps)
+        }
+
+        const formattedCorrectSteps = correctSteps.map((step, index) => `${index + 1}) ${step.step}\n   Hint: ${step.hint ? step.hint : 'None'}`).join('\n');
+        const formattedStudentSteps = steps.map((step, index) => `${index + 1}) ${step}`).join('\n');
+        console.log("THIS IS THE STUDENT STEPS " + formattedStudentSteps)
+
+        const jsonOutput = JSON.stringify({
+            Hint: "Hint for the student",
+        });
+
+        const promptText = `Given the question, correct steps, and correct answer, a student's work, give a helpful hint that a student who is stuck can use.
+
+Return in JSON format:
+${jsonOutput}
+
+Question: ${correctQuestion}
+Correct steps:
+${formattedCorrectSteps}
+
+Correct answer:${correctAnswer}
+
+Student steps:
+${formattedStudentSteps}
+Student answer: ${finalAnswer}`;
+
+        console.log(promptText);
+
+        client.chat.completions
+            .create({
+                model: "gpt-3.5-turbo",
+                messages: [
+                    {
+                        role: "system",
+                        content: promptText,
+                    }
+                ],
+            })
+            .then(async (data) => {
+
+                try {
+                    const response = JSON.parse(data.choices[0].message.content);
+                    console.log("Hints:", response.Hint);
+
+                } catch (error) {
+                    toast.error("Error processing data, please try again!", {});
+                }
+
+
+            });
+    }
+
     return (
         <div className="bg-purple-200 h-screen flex flex-col justify-center">
             <div className="pt-5">
@@ -264,6 +336,10 @@ Student answer: ${finalAnswer}`;
 
                     <form onSubmit={handleSubmit} className="space-y-4">
                         <h2 className="text-lg font-semibold mb-2">{question}</h2>
+
+                        <div className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md" onClick={() => manageHint()}>
+                            <h1> I'm stuck! (hint) </h1>
+                        </div>
 
                         <h2 className="text-lg font-semibold mb-2">Steps:</h2>
 
