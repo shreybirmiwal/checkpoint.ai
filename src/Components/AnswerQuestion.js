@@ -174,6 +174,8 @@ Student answer: ${finalAnswer}`;
                         content: promptText,
                     }
                 ],
+                temperature: 0,
+                response_format: { "type": "json_object" },
             })
             .then(async (data) => {
 
@@ -319,6 +321,8 @@ Student answer: ${finalAnswer}`;
                         content: promptText,
                     }
                 ],
+                temperature: 0,
+                response_format: { "type": "json_object" },
             })
             .then(async (data) => {
 

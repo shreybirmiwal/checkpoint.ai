@@ -88,28 +88,35 @@ function AnalyticsAssignments() {
                         content: promptText,
                     }
                 ],
+                temperature: 0,
+                response_format: { "type": "json_object" },
+
+
             })
             .then(async (data) => {
-                console.log(data.choices[0].message.content);
-                const response = JSON.parse(data.choices[0].message.content);
-                // Accessing the data
-                console.log("Common MISTAKES:", response.commonMistakes);
+
+                try {
+                    console.log(data.choices[0].message.content);
+                    const response = JSON.parse(data.choices[0].message.content);
+                    // Accessing the data
+                    console.log("Common MISTAKES:", response.commonMistakes);
 
 
-                updateDoc(doc(db, "Stats", id),
-                    { CommonMistakes: response.commonMistakes }
-                ).then(() => {
-                    toast.success("Updated analytics successfully!");
-                    getData();
-                }).catch((error) => {
-                    console.error("Error updating document: ", error);
-                    toast.error("Error updating analytics!");
-                });
+                    updateDoc(doc(db, "Stats", id),
+                        { CommonMistakes: response.commonMistakes }
+                    ).then(() => {
+                        toast.success("Updated analytics successfully!");
+                        getData();
+                    }).catch((error) => {
+                        console.error("Error updating document: ", error);
+                        toast.error("Error updating analytics!");
+                    });
 
+                    return response.commonMistakes
+                } catch (error) {
+                    toast.error("Error! " + error);
+                }
 
-
-
-                return response.commonMistakes
 
 
             });
