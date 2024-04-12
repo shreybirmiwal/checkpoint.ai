@@ -1,3 +1,11 @@
+to do:
+2) It used to be 1 submission only. I've just changed the code to allow for unlimited attempts, but the teacher can see the # of resubmissions
+
+
+
+
+
+
 ERROR: somewhere here: 
                     //remove pendign assignemnt, add it to completed assignments
                     updateDoc(doc(db, "Students", user.uid), {
