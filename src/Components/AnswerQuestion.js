@@ -10,7 +10,7 @@ import { useNavigate } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
 
 import { db } from '../firebase';
-import { doc, updateDoc, getDoc, getDocs, collection, FieldValue, arrayUnion, arrayRemove } from 'firebase/firestore';
+import { doc, updateDoc, getDoc, getDocs, collection, FieldValue, arrayUnion, arrayRemove, setDoc } from 'firebase/firestore';
 import Modal from 'react-modal';
 import { getAuth } from "firebase/auth";
 import { onAuthStateChanged } from "firebase/auth";
@@ -102,16 +102,30 @@ function AnswerQuestion() {
         },
     };
 
-    const moveAssignmentToCompleted = async () => {
+    const moveAssignmentToCompleted = async (id) => {
         try {
             // Construct the reference to the document in the collection
             const studentDocumentRef = doc(db, "Students", user.uid);
 
-            // Update the document to remove the assignment from "Assigned" and add it to "Completed"
-            await updateDoc(studentDocumentRef, {
-                [`Assigned.${id}`]: deleteField(),
-                [`Completed.${id}`]: "test" // You can set any value here, like a timestamp
-            });
+            // Get the current document data
+            const studentDoc = await getDoc(studentDocumentRef);
+            var studentData = studentDoc.data();
+
+
+            console.log("THE STUDENTS DATA >>. " + JSON.stringify(studentData))
+
+            //move the data from assigend to competled
+            if (studentData.Assigned[id]) {
+                // Move the object to the 'Completed' section
+                studentData.Completed[id] = studentData.Assigned[id];
+                delete studentData.Assigned[id]; // Remove from 'Assigned'
+            }
+
+            console.log("THE STUDENTS DATA >>. " + JSON.stringify(studentData))
+
+            // Update the document
+            await setDoc(studentDocumentRef, studentData);
+
         } catch (error) {
             console.error("Error moving assignment to completed:", error);
         }
@@ -189,7 +203,7 @@ Student answer: ${finalAnswer}`;
 
 
                         //remove pendign assignemnt, add it to completed assignments
-                        // moveAssignmentToCompleted()
+                        moveAssignmentToCompleted(id)
 
                     ]).then(() => {
                         setReady(true);
