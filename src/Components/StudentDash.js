@@ -47,6 +47,35 @@ const StudentDash = () => {
         toggleModal();
     }
 
+    const handleTryAgain = async (id) => {
+        try {
+            // Construct the reference to the document in the collection
+            const studentDocumentRef = doc(db, "Students", user.uid);
+
+            // Get the current document data
+            const studentDoc = await getDoc(studentDocumentRef);
+            var studentData = studentDoc.data();
+
+
+            console.log("THE STUDENTS DATA >>. " + JSON.stringify(studentData))
+
+            if (studentData.Completed[id]) {
+                studentData.Assigned[id] = studentData.Completed[id];
+                delete studentData.Completed[id]; // Remove from 'completed'
+            }
+
+            console.log("THE STUDENTS DATA >>. " + JSON.stringify(studentData))
+
+            // Update the document
+            await setDoc(studentDocumentRef, studentData);
+
+            setTimeout(() => { window.location.reload(); }, 2000);
+
+        } catch (error) {
+            console.error("Error moving assignment to completed:", error);
+        }
+    }
+
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, async (user) => {
             if (user) {
@@ -184,7 +213,13 @@ const StudentDash = () => {
                     ))}
                     {tab === 1 && completedTitle.map((title, index) => (
                         <div key={index} className="bg-white rounded-lg shadow-md p-10 mb-3">
-                            <p>{title.length > 40 ? title.slice(0, 40) + '...' : title}</p>
+                            <p>{title.length > 40 ? title.slice(0, 40) + '...' : title} !!</p>
+                            <button
+                                className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 focus:outline-none"
+                                onClick={() => handleTryAgain(completedID[index])}
+                            >
+                                Try Again
+                            </button>
                         </div>
                     ))}
                 </div>

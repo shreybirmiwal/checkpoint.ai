@@ -10,7 +10,7 @@ import { useNavigate } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
 
 import { db } from '../firebase';
-import { doc, updateDoc, getDoc, getDocs, collection, FieldValue, arrayUnion, arrayRemove, setDoc } from 'firebase/firestore';
+import { doc, updateDoc, getDoc, getDocs, collection, FieldValue, arrayUnion, arrayRemove, setDoc, increment } from 'firebase/firestore';
 import Modal from 'react-modal';
 import { getAuth } from "firebase/auth";
 import { onAuthStateChanged } from "firebase/auth";
@@ -194,6 +194,9 @@ Student answer: ${finalAnswer}`;
                     console.log("Accuracy:", response.Accuracy);
                     console.log("Mistakes:", response.mistakes);
 
+                    updateDoc(doc(db, "Stats", id), {
+                        Proficiency: response.Accuracy
+                    })
 
                     await Promise.all([
                         updateDoc(doc(db, "Stats", id), {
@@ -258,7 +261,9 @@ Student answer: ${finalAnswer}`;
             //show analysis modal
             //upload data to stats
             gptPart("prompt");
-
+            updateDoc(doc(db, "Stats", id), {
+                Attempts: increment(1)
+            })
 
         }
         else {
@@ -338,6 +343,10 @@ Student answer: ${finalAnswer}`;
                     const response = JSON.parse(data.choices[0].message.content);
                     console.log("Hints:", response.Hint);
                     swal("Hint:", response.Hint);
+
+                    updateDoc(doc(db, "Stats", id), {
+                        Hints: increment(1)
+                    })
 
                 } catch (error) {
                     toast.error("Error processing data, please try again!", {});

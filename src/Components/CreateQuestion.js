@@ -147,7 +147,9 @@ function CreateQuestion({ teacherUID, closeModal }) {
                 CommonMistakes: [],
                 Proficiency: 0,
                 StudentRes: {},
-                allMistakes: []
+                allMistakes: [],
+                Attempts: 0,
+                Hints: 0,
             });
 
 
