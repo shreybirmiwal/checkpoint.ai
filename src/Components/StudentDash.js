@@ -22,10 +22,9 @@ const StudentDash = () => {
 
     const [tab, setTab] = useState(0) // 0 for assigned, 1 for completed
 
-
-
+    const [clickedQuestionSteps, setClickedQuestionSteps] = useState([]);
+    const [clickedQuestionAnswer, setClickedQuestionAnswer] = useState('');
     const [clickedQuestion, setClickedQuestion] = useState('');
-    const [clickedQuestionID, setClickedQuestionID] = useState('');
 
     const auth = getAuth();
     const navigate = useNavigate();
@@ -40,10 +39,18 @@ const StudentDash = () => {
         setIsOpen(!modalIsOpen)
     };
 
-    const handleClickAssignment = (e) => {
-        //console.log(e.target.innerText);
-        setClickedQuestion(e.target.innerText);
-        setClickedQuestionID(assignmentsID[assignmentsTitle.indexOf(e.target.innerText)]);
+    const handleViewSolution = async (id) => {
+        //get the question data
+
+        const assingedRef = doc(db, "Teacher", id);
+        const assignedSnap = await getDoc(assingedRef);
+
+        var data = assignedSnap.data();
+
+        setClickedQuestion(data.Question);
+        setClickedQuestionAnswer(data.Answer)
+        setClickedQuestionSteps(data.Steps)
+
         toggleModal();
     }
 
@@ -215,15 +222,52 @@ const StudentDash = () => {
                         <div key={index} className="bg-white rounded-lg shadow-md p-10 mb-3">
                             <p>{title.length > 40 ? title.slice(0, 40) + '...' : title} !!</p>
                             <button
-                                className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 focus:outline-none"
+                                className="px-4 py-2 bg-green-500 mt-2 text-white rounded hover:bg-green-600 focus:outline-none"
                                 onClick={() => handleTryAgain(completedID[index])}
                             >
                                 Try Again
+                            </button>
+                            <button
+                                className="px-4 py-2 bg-purple-300 ml-2 mt-2 text-white rounded hover:bg-purple-600 focus:outline-none"
+                                onClick={() => handleViewSolution(completedID[index])}
+                            >
+                                View Solution
                             </button>
                         </div>
                     ))}
                 </div>
             </div>
+
+            <Modal
+                isOpen={modalIsOpen}
+                onRequestClose={toggleModal}
+                style={modalStyle}
+                contentLabel="Example Modal"
+            >
+                <div className='hover:text-purple-700 flex flex-row mb-2' onClick={toggleModal}>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+                    </svg>
+                    Close
+                </div>
+
+                <div className="bg-blue-500 rounded-lg shadow-md p-4 mb-4">
+                    <p className="text-black">Solution: {clickedQuestion}</p>
+                </div>
+                <div className="bg-green-500 rounded-lg shadow-md p-4 mb-4">
+                    <p className="text-black">Steps:</p>
+                    {clickedQuestionSteps.map((step, index) => (
+                        <div key={index} className="flex">
+                            <p className="mr-2">{step.step}</p>
+                            {/* <p>{step.hint}</p> */}
+                        </div>
+                    ))}
+                </div>
+                <div className="bg-purple-500 rounded-lg shadow-md p-4 mb-4">
+                    <p className="text-black">Final Answer: {clickedQuestionAnswer}</p>
+                </div>
+
+            </Modal>
 
             <ToastContainer />
 
