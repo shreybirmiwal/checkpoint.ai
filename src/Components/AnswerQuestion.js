@@ -242,7 +242,10 @@ Student answer: ${finalAnswer}`;
                 [uid]: arrayUnion(...newMistakes)
             };
 
-            await updateDoc(docRef, { StudentRes: updatedStudentRes });
+            var tData = docSnap.data();
+            tData.StudentRes = updatedStudentRes;
+
+            await setDoc(docRef, tData, { merge: true });
         } else {
             console.error("Document not found");
         }

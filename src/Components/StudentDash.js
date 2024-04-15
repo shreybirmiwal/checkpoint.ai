@@ -120,7 +120,7 @@ const StudentDash = () => {
 
         const classRef = doc(db, "Class", classCode);
 
-        updateDoc(classRef, { Students: { [user.uid]: user.displayName } })
+        setDoc(classRef, { Students: { [user.uid]: user.displayName } }, { merge: true })
             .then(() => {
                 toast.success("Joined class successfully!", {
                     position: "top-right",
