@@ -147,7 +147,7 @@ const StudentDash = () => {
                 });
             });
 
-        setClassCode('');
+
     };
 
     const modalStyle = {

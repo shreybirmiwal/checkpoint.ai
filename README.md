@@ -1,8 +1,8 @@
 to do:
-2) It used to be 1 submission only. I've just changed the code to allow for unlimited attempts, but the teacher can see the # of resubmissions
-
-
-
+1 - new students get all old assignemnets assigned them to thjem
+2 - students can view the correct steps to a question
+3 - if student correct they know correct
+4 - add all the psrecheck questions and publish to weiland
 
 
 
