@@ -38,6 +38,7 @@ function AnswerQuestion() {
     const [finalAnswer, setFinalAnswer] = useState('');
     const [ready, setReady] = useState(false)
     const [mistakes, setMistakes] = useState([]);
+    const [Accuracy, setAccuracy] = useState(0);
 
     useEffect(() => {
         console.log("TITLE " + title)
@@ -216,6 +217,7 @@ Student answer: ${finalAnswer}`;
 
 
                     setMistakes(response.mistakes)
+                    setAccuracy(response.Accuracy)
 
                     toggleModal()
 
@@ -433,6 +435,11 @@ Student answer: ${finalAnswer}`;
                     contentLabel="Example Modal"
                 >
                     <div className="text-center"> {/* Center align content */}
+
+                        <div className="bg-blue-500 rounded-lg shadow-md p-4 mb-4">
+                            <p className="text-black">{Accuracy} Accurate</p>
+                        </div>
+
                         {mistakes.map((mistake, index) => (
                             <div key={index} className="bg-white rounded-lg shadow-md p-4 mb-4">
                                 <p className="text-black">{mistake}</p> {/* Set text color to black */}
@@ -441,7 +448,7 @@ Student answer: ${finalAnswer}`;
                         <div className="mt-auto text-center"> {/* Position button at the bottom */}
                             {ready ? (
                                 <div
-                                    className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded cursor-pointer transition duration-300"
+                                    className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded cursor-pointer transition duration-300 bottom-0 align-bottom"
 
                                     //className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded cursor-pointer transition duration-300 inline-block"
                                     onClick={() => navigate('/dashboard')}
