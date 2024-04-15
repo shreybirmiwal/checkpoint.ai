@@ -128,7 +128,7 @@ const StudentDash = () => {
         const classRef = doc(db, "Class", classCode);
 
         setDoc(classRef, { Students: { [user.uid]: user.displayName } }, { merge: true })
-            .then(() => {
+            .then(async () => {
                 toast.success("Joined class successfully!", {
                     position: "top-right",
                     autoClose: 5000,
@@ -139,6 +139,26 @@ const StudentDash = () => {
                     progress: undefined,
                     theme: "dark",
                 });
+
+
+                var curData_assigned;
+
+                //get all the current old questions
+                const curAssis = await getDoc(doc(db, "activeAssignments", classCode));
+                console.log(curAssis.data());
+
+                //get the students current data
+                const studentRef = doc(db, "Students", user.uid);
+                const studentSnap = await getDoc(studentRef);
+                curData_assigned = studentSnap.data().Assigned;
+
+                //update the students data with the new questions
+                curData_assigned = { ...curData_assigned, ...curAssis.data() };
+
+                updateDoc(studentRef, {
+                    Assigned: curData_assigned
+                }, { merge: true });
+
             })
             .catch((error) => {
                 console.error("Error joining class:", error);

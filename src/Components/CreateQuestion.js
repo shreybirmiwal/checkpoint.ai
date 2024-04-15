@@ -153,6 +153,13 @@ function CreateQuestion({ teacherUID, closeModal }) {
             });
 
 
+
+            //add question to teachers active questions
+            await setDoc(doc(db, "activeAssignments", teacherUID), {
+                [questionID]: question
+            }, { merge: true })
+
+
             setFinalAnswer('');
             setQuestion('');
             setSteps([{ step: '', hint: '' }]);
