@@ -1,9 +1,8 @@
 to do:
-1 - new students get all old assignemnets assigned them to thjem
-2 - students can view the correct steps to a question
-3 - if student correct they know correct
-4 - add all the psrecheck questions and publish to weiland
-
+1 - new students get all old assignemnets assigned them to thjem DONE 
+2 - students can view the correct steps to a question            DONE, tested
+3 - if student correct they know correct                          DONE, tested
+4 - add all the psrecheck questions and publish to weiland         
 
 
 ERROR: somewhere here: 
