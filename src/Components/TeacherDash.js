@@ -45,15 +45,15 @@ function TeacherDash() {
         setIsOpen(!modalIsOpen)
     };
     const ImagetoggleModal = () => {
-        setFiles([]);
+        setFiles();
         ImagesetIsOpen(!ImagemodalIsOpen)
     };
 
 
 
-    const [files, setFiles] = useState([]);
+    const [files, setFiles] = useState();
     const uploadImage = (file) => {
-        setFiles([...files, ...file]);
+        setFiles(file);
         console.log(files)
     };
 
@@ -112,33 +112,33 @@ function TeacherDash() {
             CorrectAnswer: "Correct Final Answer",
         });
 
-        const promptText = `Given images, extract the question, steps and correct answer. Create hints for each step.
+        const promptText = `Given image of a question and the solving steps and answer, extract the question, steps and correct answer. Create hints for each step.
         Return in JSON format:
         ${jsonOutput}
         `;
 
-        const response = await client.chat.completions.create(
-            model = "gpt-4-turbo",
-            messages = [
+        const base64Image = files.base64;
+
+        const response = await client.chat.completions.create({
+            model: "gpt-4-turbo",
+            messages: [
                 {
                     "role": "user",
                     "content": [
                         { "type": "text", "text": promptText },
-                        {
-                            "type": "image_url",
-                            "image_url": {
-                                "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Gfp-wisconsin-madison-the-nature-boardwalk.jpg/2560px-Gfp-wisconsin-madison-the-nature-boardwalk.jpg",
-                            },
-                        },
+                        { type: "image_url", image_url: { url: `data:image/jpeg;base64,${base64Image}` } }
                     ],
                 }
             ],
-            temperature = 0,
-            response_format = { "type": "json_object" },
+            temperature: 0,
+            response_format: { "type": "json_object" },
             //max_tokens = 300,
-        );
+        });
 
         //set dets
+        console.log(response);
+        console.log(response.data.choices[0].message.data.text);
+        console.log(response.data.choices[0]);
 
 
         ImagetoggleModal();
@@ -269,14 +269,13 @@ function TeacherDash() {
                                     <h1 className='mt-5 text-2xl font-bold'>Upload the question and the correct work</h1>
                                     <h2 className='mt-2'> You may upload as multiple files. Ensure high quality and easily legiable for best results. </h2>
                                     <div className='mt-3'>
-                                        <FileUploader handleChange={uploadImage} name="file" types={fileTypes} multiple={true} />
+                                        <FileUploader handleChange={uploadImage} name="file" types={fileTypes} />
                                     </div>
 
 
                                     <div>
-                                        {Array.from(files).map(f => (
-                                            <h2 key={f.name}>file: {f.name}</h2>
-                                        ))}
+                                        {files && <img src={files.base64} alt="image" className="w-1/2 h-1/2" />}
+                                        {files && <h2 >file: {files.name}</h2>}
                                     </div>
 
                                     <button className="bg-green-500 text-white px-4 py-2 rounded-md bottom-0 w-full mt-5" onClick={submitImages}>
