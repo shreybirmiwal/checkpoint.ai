@@ -41,6 +41,8 @@ function TeacherDash() {
     const [modalIsOpen, setIsOpen] = React.useState(false);
     const [ImagemodalIsOpen, ImagesetIsOpen] = React.useState(false);
 
+
+
     const toggleModal = () => {
         setIsOpen(!modalIsOpen)
     };
@@ -102,7 +104,17 @@ function TeacherDash() {
         return unsubscribe;
     }, [auth, navigate]);
 
+    const getBase64 = (file) => {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = (error) => reject(error);
+        });
+    }
+
     const submitImages = async () => {
+
 
         //use vision gpt
         const jsonOutput = JSON.stringify({
@@ -117,7 +129,8 @@ function TeacherDash() {
         ${jsonOutput}
         `;
 
-        const base64Image = files.base64;
+        const base64Image = await getBase64(files);
+        console.log("BASE 64  + ", base64Image)
 
         const response = await client.chat.completions.create({
             model: "gpt-4-turbo",
@@ -126,7 +139,7 @@ function TeacherDash() {
                     "role": "user",
                     "content": [
                         { "type": "text", "text": promptText },
-                        { type: "image_url", image_url: { url: `data:image/jpeg;base64,${base64Image}` } }
+                        { type: "image_url", image_url: { url: base64Image } } // Remove "data:image/png;base64," prefix
                     ],
                 }
             ],
@@ -136,9 +149,13 @@ function TeacherDash() {
         });
 
         //set dets
-        console.log(response);
-        console.log(response.data.choices[0].message.data.text);
-        console.log(response.data.choices[0]);
+        const res2 = JSON.parse(response.choices[0].message.content);
+        console.log(res2)
+
+        console.log("Question:", res2.Question);
+        console.log("Steps:", res2.Steps);
+        console.log("Answer:", res2.CorrectAnswer);
+        console.log("Hints:", res2.Hints);
 
 
         ImagetoggleModal();
@@ -267,14 +284,13 @@ function TeacherDash() {
 
                                 <div className='bg-gray-200 rounded-xl p-4 h-full'>
                                     <h1 className='mt-5 text-2xl font-bold'>Upload the question and the correct work</h1>
-                                    <h2 className='mt-2'> You may upload as multiple files. Ensure high quality and easily legiable for best results. </h2>
+                                    <h2 className='mt-2'> Ensure high quality and easily legiable for best results. </h2>
                                     <div className='mt-3'>
                                         <FileUploader handleChange={uploadImage} name="file" types={fileTypes} />
                                     </div>
 
 
                                     <div>
-                                        {files && <img src={files.base64} alt="image" className="w-1/2 h-1/2" />}
                                         {files && <h2 >file: {files.name}</h2>}
                                     </div>
 
