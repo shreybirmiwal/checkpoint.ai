@@ -33,22 +33,24 @@ function AnalyticsAssignments() {
     const [proficiency, setProficiency] = useState();
     const [studentRes, setStudentRes] = useState();
 
-    useEffect(() => {
-        const unsubscribe = onAuthStateChanged(auth, async (user) => {
-            if (user) {
-                setUser(user);
-                const uid = user.uid;
-            } else {
-                navigate("/signup");
-            }
-        });
 
-        return unsubscribe;
-    }, [auth, navigate]);
+
+    const [question, setQuestion] = useState("");
+    const [steps, setSteps] = useState([]);
+    const [answer, setFinalAnswer] = useState("");
 
     useEffect(() => {
-        //get data
-        getData();
+        const fetchData = async () => {
+            //get data
+            getData();
+
+            var d = await getDoc(doc(db, "Teacher", id))
+            setFinalAnswer(d.data().Answer)
+            setSteps(d.data().Steps)
+            setQuestion(d.data().Question)
+        };
+
+        fetchData();
     }, []);
 
     const getData = async () => {
@@ -144,7 +146,7 @@ function AnalyticsAssignments() {
 
 
     return (
-        <div className="bg-purple-200 h-screen flex flex-col justify-center">
+        <div className="bg-purple-200 min-h-screen max-h-full pb-36 flex flex-col justify-center">
             <div className="pt-5">
                 <Nav />
             </div>
@@ -160,14 +162,39 @@ function AnalyticsAssignments() {
                     Generate updated analytics (computationally heavy)
                 </div>
 
+                <div className="bg-gray-200 rounded-xl p-4 mt-5">
+                    <div className="mt-2">
+                        <h3 className="text-lg font-semibold mb-2">{question}</h3>
+                    </div>
+
+                    <div className="mt-4">
+                        <h3 className="text-lg font-semibold mb-2">Steps</h3>
+                        {steps.map((step, index) => (
+                            <div key={index} className="mb-3 bg-white rounded-xl p-3 m-2">
+                                <p className="mb-1">{step.step}</p>
+                                <p className="text-sm text-gray-500">{step.hint}</p>
+                            </div>
+                        ))}
+                    </div>
+
+                    <div className="mt-4">
+                        <h3 className="text-lg font-semibold mb-2">Answer: {answer}</h3>
+                    </div>
+                </div>
+
+
+
+
                 <div className='bg-gray-200 rounded-xl p-3 mt-5'>
                     <AccordianOuter common_mistakes={common_mistakes} />
                 </div>
 
+
+
             </div>
             <ToastContainer />
 
-        </div >
+        </div>
     );
 
 }

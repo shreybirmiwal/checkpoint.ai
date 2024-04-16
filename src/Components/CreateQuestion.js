@@ -15,8 +15,32 @@ import { db } from '../firebase';
 import { addDoc, deleteField, doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
 import { increment } from "firebase/firestore";
 import { collection } from "firebase/firestore";
+import { useEffect } from 'react';
 
-function CreateQuestion({ teacherUID, closeModal }) {
+function CreateQuestion({ teacherUID, closeModal, imagePickedSteps, imagePickedQuestion, imagePickedHints, imagePickedAnswer }) {
+
+    useEffect(() => {
+
+        // console.log("THE HITNTS ARE ", imagePickedHints)
+        //console.log(" THE STEPS ARE ", imagePickedSteps)
+
+        if (imagePickedAnswer != '') {
+            setFinalAnswer(imagePickedAnswer);
+        }
+        if (imagePickedQuestion != '') {
+            setQuestion(imagePickedQuestion);
+        }
+        if (imagePickedHints.length != 0) {
+            var temp = [];
+            for (var i = 0; i < imagePickedHints.length; i++) {
+                temp.push({ step: imagePickedSteps[i], hint: imagePickedHints[i] });
+            }
+            // console.log("TEMPP", temp)
+            setSteps(temp);
+        }
+
+    }, [imagePickedAnswer, imagePickedHints, imagePickedQuestion, imagePickedSteps]); // Add dependencies as needed
+
     const [question, setQuestion] = useState('');
     const [steps, setSteps] = useState([{ step: '', hint: '' }]);
     const [finalAnswer, setFinalAnswer] = useState('');

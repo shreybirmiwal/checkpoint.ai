@@ -11,6 +11,7 @@ import Modal from 'react-modal';
 import CreateQuestion from './CreateQuestion';
 import { FileUploader } from "react-drag-drop-files";
 import OpenAI from 'openai';
+import Loader from 'react-loader';
 
 
 const fileTypes = ["JPG", "PNG", "GIF"];
@@ -42,6 +43,15 @@ function TeacherDash() {
     const [ImagemodalIsOpen, ImagesetIsOpen] = React.useState(false);
 
 
+    const [isLoading, setLoading] = useState(false)
+
+
+
+    //data to pass onto the other screen where users can edit the question if the vision got it incorrect
+    const [imagePickedQuestion, setImagePickedQuestion] = useState('');
+    const [imagePickedSteps, setImagePickedSteps] = useState([]);
+    const [imagePickedHints, setImagePickedHints] = useState([]);
+    const [imagePickedAnswer, setImagePickedAnswer] = useState('');
 
     const toggleModal = () => {
         setIsOpen(!modalIsOpen)
@@ -115,6 +125,7 @@ function TeacherDash() {
 
     const submitImages = async () => {
 
+        setLoading(true)
 
         //use vision gpt
         const jsonOutput = JSON.stringify({
@@ -124,7 +135,7 @@ function TeacherDash() {
             CorrectAnswer: "Correct Final Answer",
         });
 
-        const promptText = `Given image of a question and the solving steps and answer, extract the question, steps and correct answer. Create hints for each step.
+        const promptText = `Given image of a question and the solving steps and answer, extract the question, steps and correct answer. Include specific calculations, numbers, and variables solved for at each step. Create hints for each step.
         Return in JSON format:
         ${jsonOutput}
         `;
@@ -148,6 +159,8 @@ function TeacherDash() {
             //max_tokens = 300,
         });
 
+        setLoading(false);
+
         //set dets
         const res2 = JSON.parse(response.choices[0].message.content);
         console.log(res2)
@@ -156,6 +169,12 @@ function TeacherDash() {
         console.log("Steps:", res2.Steps);
         console.log("Answer:", res2.CorrectAnswer);
         console.log("Hints:", res2.Hints);
+
+
+        setImagePickedAnswer(res2.CorrectAnswer);
+        setImagePickedQuestion(res2.Question);
+        setImagePickedSteps(res2.Steps);
+        setImagePickedHints(res2.Hints);
 
 
         ImagetoggleModal();
@@ -265,7 +284,7 @@ function TeacherDash() {
                                     Close
                                 </div>
 
-                                <CreateQuestion teacherUID={user.uid} closeModal={toggleModal} />
+                                <CreateQuestion teacherUID={user.uid} closeModal={toggleModal} imagePickedAnswer={imagePickedAnswer} imagePickedHints={imagePickedHints} imagePickedQuestion={imagePickedQuestion} imagePickedSteps={imagePickedSteps} />
                             </Modal>
 
 
@@ -288,6 +307,9 @@ function TeacherDash() {
                                     <div className='mt-3'>
                                         <FileUploader handleChange={uploadImage} name="file" types={fileTypes} />
                                     </div>
+
+
+                                    {isLoading && <Loader loading={true} />}
 
 
                                     <div>
