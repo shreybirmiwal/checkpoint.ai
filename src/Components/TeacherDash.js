@@ -10,12 +10,21 @@ import 'react-toastify/dist/ReactToastify.css';
 import Modal from 'react-modal';
 import CreateQuestion from './CreateQuestion';
 import { FileUploader } from "react-drag-drop-files";
+import OpenAI from 'openai';
 
 
 const fileTypes = ["JPG", "PNG", "GIF"];
 
 
 function TeacherDash() {
+
+
+    const client = new OpenAI({
+        apiKey: process.env['REACT_APP_OPENAI_API_KEY'],
+        dangerouslyAllowBrowser: true
+        , // This is the default and can be omitted
+    });
+
 
     const [user, setUser] = useState(null);
     const auth = getAuth();
@@ -92,6 +101,49 @@ function TeacherDash() {
 
         return unsubscribe;
     }, [auth, navigate]);
+
+    const submitImages = async () => {
+
+        //use vision gpt
+        const jsonOutput = JSON.stringify({
+            Question: "Question",
+            Steps: ["Step 1", "Step 2", "Step 3"],
+            Hints: ["Hint 1 for Step1", "Hint 2 for Step2", "Hint 3 for Step 3"],
+            CorrectAnswer: "Correct Final Answer",
+        });
+
+        const promptText = `Given images, extract the question, steps and correct answer. Create hints for each step.
+        Return in JSON format:
+        ${jsonOutput}
+        `;
+
+        const response = await client.chat.completions.create(
+            model = "gpt-4-turbo",
+            messages = [
+                {
+                    "role": "user",
+                    "content": [
+                        { "type": "text", "text": promptText },
+                        {
+                            "type": "image_url",
+                            "image_url": {
+                                "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Gfp-wisconsin-madison-the-nature-boardwalk.jpg/2560px-Gfp-wisconsin-madison-the-nature-boardwalk.jpg",
+                            },
+                        },
+                    ],
+                }
+            ],
+            temperature = 0,
+            response_format = { "type": "json_object" },
+            //max_tokens = 300,
+        );
+
+        //set dets
+
+
+        ImagetoggleModal();
+        toggleModal();
+    }
 
 
     const handleTabClick = (tabIndex) => {
@@ -227,13 +279,10 @@ function TeacherDash() {
                                         ))}
                                     </div>
 
-                                    <button className="bg-green-500 text-white px-4 py-2 rounded-md bottom-0 w-full mt-5">
+                                    <button className="bg-green-500 text-white px-4 py-2 rounded-md bottom-0 w-full mt-5" onClick={submitImages}>
                                         Submit
                                     </button>
                                 </div>
-
-
-
 
 
 
