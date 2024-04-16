@@ -9,6 +9,11 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Modal from 'react-modal';
 import CreateQuestion from './CreateQuestion';
+import { FileUploader } from "react-drag-drop-files";
+
+
+const fileTypes = ["JPG", "PNG", "GIF"];
+
 
 function TeacherDash() {
 
@@ -31,7 +36,16 @@ function TeacherDash() {
         setIsOpen(!modalIsOpen)
     };
     const ImagetoggleModal = () => {
+        setFiles([]);
         ImagesetIsOpen(!ImagemodalIsOpen)
+    };
+
+
+
+    const [files, setFiles] = useState([]);
+    const uploadImage = (file) => {
+        setFiles([...files, ...file]);
+        console.log(files)
     };
 
     useEffect(() => {
@@ -198,6 +212,29 @@ function TeacherDash() {
                                     </svg>
                                     Close
                                 </div>
+
+                                <div className='bg-gray-200 rounded-xl p-4 h-full'>
+                                    <h1 className='mt-5 text-2xl font-bold'>Upload the question and the correct work</h1>
+                                    <h2 className='mt-2'> You may upload as multiple files. Ensure high quality and easily legiable for best results. </h2>
+                                    <div className='mt-3'>
+                                        <FileUploader handleChange={uploadImage} name="file" types={fileTypes} multiple={true} />
+                                    </div>
+
+
+                                    <div>
+                                        {Array.from(files).map(f => (
+                                            <h2 key={f.name}>file: {f.name}</h2>
+                                        ))}
+                                    </div>
+
+                                    <button className="bg-green-500 text-white px-4 py-2 rounded-md bottom-0 w-full mt-5">
+                                        Submit
+                                    </button>
+                                </div>
+
+
+
+
 
 
                             </Modal>
