@@ -25,9 +25,13 @@ function TeacherDash() {
 
 
     const [modalIsOpen, setIsOpen] = React.useState(false);
+    const [ImagemodalIsOpen, ImagesetIsOpen] = React.useState(false);
 
     const toggleModal = () => {
         setIsOpen(!modalIsOpen)
+    };
+    const ImagetoggleModal = () => {
+        ImagesetIsOpen(!ImagemodalIsOpen)
     };
 
     useEffect(() => {
@@ -156,8 +160,13 @@ function TeacherDash() {
                     ) : (
                         <div>
 
-                            <div className="bg-blue-300 rounded-lg shadow-md p-10 mb-3 hover:bg-blue-400" onClick={toggleModal}>
-                                <p>Create an assignment</p>
+                            <div className='flex flex-row'>
+                                <div className="bg-purple-600 text-white rounded-lg shadow-md p-10 mb-3 hover:bg-purple-800 w-1/2 text-center" onClick={ImagetoggleModal}>
+                                    <p>Generate question from image</p>
+                                </div>
+                                <div className="bg-blue-300 rounded-lg shadow-md p-10 mb-3 hover:bg-blue-400 w-1/2 text-center" onClick={toggleModal}>
+                                    <p>Create an assignment from text</p>
+                                </div>
                             </div>
 
                             <Modal
@@ -175,6 +184,24 @@ function TeacherDash() {
 
                                 <CreateQuestion teacherUID={user.uid} closeModal={toggleModal} />
                             </Modal>
+
+
+                            <Modal
+                                isOpen={ImagemodalIsOpen}
+                                onRequestClose={ImagetoggleModal}
+                                style={modalStyle}
+                                contentLabel="Example Modal"
+                            >
+                                <div className='hover:text-purple-700 flex flex-row mb-2' onClick={ImagetoggleModal}>
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+                                    </svg>
+                                    Close
+                                </div>
+
+
+                            </Modal>
+
 
                         </div>
 
