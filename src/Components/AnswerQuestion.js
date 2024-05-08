@@ -60,10 +60,13 @@ function AnswerQuestion() {
     }, [auth, navigate]);
 
 
-    const [files, setFiles] = useState();
+    // const [files, setFiles] = useState();
     const uploadImage = (file) => {
-        setFiles(file);
-        console.log(files)
+
+        // setFiles(file);
+        // console.log(file)
+
+        submitImages(file);
     };
 
 
@@ -76,24 +79,24 @@ function AnswerQuestion() {
         });
     }
 
-    const submitImages = async () => {
+    const submitImages = async (file) => {
 
         setLoading(true)
 
         //use vision gpt
         const jsonOutput = JSON.stringify({
-            Question: "Question",
             Steps: ["Step 1", "Step 2", "Step 3"],
-            Hints: ["Hint 1 for Step1", "Hint 2 for Step2", "Hint 3 for Step 3"],
-            CorrectAnswer: "Correct Final Answer",
+            Answer: "Student Final Answer",
         });
 
-        const promptText = `Given image of a a student's question and the solving steps and answer, extract the question, steps and answer. Include specific calculations, numbers, and variables solved for at each step. The student may have incorrect work in the picture.
+        const promptText = `Given image of a a student's work, extract the steps and answer. Include specific calculations, numbers, and variables solved for at each step. The student may have incorrect work in the picture.
+
+        The Question the student attempted to solve it: ${title}
         Return in JSON format:
         ${jsonOutput}
         `;
 
-        const base64Image = await getBase64(files);
+        const base64Image = await getBase64(file);
         console.log("BASE 64  + ", base64Image)
 
         const response = await client.chat.completions.create({
@@ -118,17 +121,12 @@ function AnswerQuestion() {
         const res2 = JSON.parse(response.choices[0].message.content);
         console.log(res2)
 
-        console.log("Question:", res2.Question);
         console.log("Steps:", res2.Steps);
-        console.log("Answer:", res2.CorrectAnswer);
+        console.log("Answer:", res2.Answer);
 
-        // setImagePickedAnswer(res2.CorrectAnswer);
-        // setImagePickedQuestion(res2.Question);
-        // setImagePickedSteps(res2.Steps);
+        setSteps(res2.Steps);
+        setFinalAnswer(res2.Answer);
 
-
-        // ImagetoggleModal();
-        // toggleModal();
     }
 
     // const getLoadingData = async () => {
@@ -482,27 +480,31 @@ Student answer: ${finalAnswer}`;
 
                         <h2 className="text-lg font-semibold mb-2">Steps:</h2>
 
-                        {steps.map((step, index) => (
-                            <div key={index} className="mb-4 flex items-center">
-                                <label className="mr-2">Step {index + 1}:</label>
-                                <input
-                                    type="text"
-                                    className="flex-grow px-3 py-2 border rounded-md focus:outline-none focus:border-blue-500"
-                                    value={step}
-                                    onChange={(e) => {
-                                        const updatedSteps = [...steps];
-                                        updatedSteps[index] = e.target.value;
-                                        setSteps(updatedSteps);
-                                    }}
-                                />
+                        <div className='h-52 m-3 overflow-scroll'>
 
-                                {steps.length > 1 && (
-                                    <button type="button" className="ml-2 text-red-600" onClick={() => handleDeleteStep(index)}>
-                                        Delete Step
-                                    </button>
-                                )}
-                            </div>
-                        ))}
+                            {steps.map((step, index) => (
+                                <div key={index} className="mb-4 flex items-center">
+                                    <label className="mr-2">Step {index + 1}:</label>
+                                    <input
+                                        type="text"
+                                        className="flex-grow px-3 py-2 border rounded-md focus:outline-none focus:border-blue-500"
+                                        value={step}
+                                        onChange={(e) => {
+                                            const updatedSteps = [...steps];
+                                            updatedSteps[index] = e.target.value;
+                                            setSteps(updatedSteps);
+                                        }}
+                                    />
+
+                                    {steps.length > 1 && (
+                                        <button type="button" className="ml-2 text-red-600" onClick={() => handleDeleteStep(index)}>
+                                            Delete Step
+                                        </button>
+                                    )}
+                                </div>
+                            ))}
+
+                        </div>
 
                         <button type="button" className="text-blue-500" onClick={handleAddStep}>
                             Add Step
