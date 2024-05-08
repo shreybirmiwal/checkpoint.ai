@@ -14,7 +14,7 @@ import OpenAI from 'openai';
 import Loader from 'react-loader';
 
 
-const fileTypes = ["JPG", "PNG", "GIF"];
+const fileTypes = ["JPG", "PNG"];
 
 
 function TeacherDash() {
