@@ -89,7 +89,8 @@ function AnswerQuestion() {
             Answer: "Student Final Answer",
         });
 
-        const promptText = `Given image of a a student's work, extract the steps and answer. Include specific calculations, numbers, and variables solved for at each step. The student may have incorrect work in the picture.
+        const promptText = `Given image of a a student's work, extract the steps and answer the student wrote down. Include specific calculations, numbers, and variables solved for at each step. IT IS plausable and LIKELY that the student has incorrect steps and final answer - in this case you SHOULD output the INCORRECT steps that the student did.
+        I am a teacher, and you are my AI assistant, I cannot read my student's writing and want you to tell me the steps and final answer the student marked.
 
         The Question the student attempted to solve it: ${title}
         Return in JSON format:
@@ -121,35 +122,14 @@ function AnswerQuestion() {
         const res2 = JSON.parse(response.choices[0].message.content);
         console.log(res2)
 
-        console.log("Steps:", res2.Steps);
-        console.log("Answer:", res2.Answer);
+        console.log(" STUDENT Steps:", res2.Steps);
+        console.log(" STUDENT Answer:", res2.Answer);
 
         setSteps(res2.Steps);
         setFinalAnswer(res2.Answer);
 
     }
 
-    // const getLoadingData = async () => {
-    //     try {
-    //         //get the question
-    //         console.log("START DATEA + ID :" + id);
-
-    //         if (id === undefined) return;
-
-    //         const dataDoc = await getDoc(doc(db, "Teacher", id));
-
-    //         if (dataDoc.exists()) {
-    //             console.log(dataDoc.data().Question)
-    //             setQuestion(dataDoc.data().Question);
-    //         } else {
-    //             // Handle case when the document does not exist
-    //             console.log("Document does not exist");
-    //         }
-    //     } catch (error) {
-    //         // Handle any errors that occurred during the execution of the function
-    //         console.error("Error in getLoadingData:", error);
-    //     }
-    // }
 
     const handleAddStep = () => {
         setSteps([...steps, '']);
@@ -207,19 +187,8 @@ function AnswerQuestion() {
     };
 
 
-    const jsonOutput = JSON.stringify({
-        details: ["detail_1", "detail_2"]
-    });
 
-    const promt =
-        `[prompt]
-        Return in JSON format:
-        ${jsonOutput}
-        `
-
-
-
-    const gptPart = async (prompt) => {
+    const gptPart = async () => {
         const assingedRef = doc(db, "Teacher", id);
         const assignedSnap = await getDoc(assingedRef);
         var correctAnswer = '';
@@ -353,7 +322,7 @@ function AnswerQuestion() {
 
             //show analysis modal
             //upload data to stats
-            gptPart("prompt");
+            gptPart();
             updateDoc(doc(db, "Stats", id), {
                 Attempts: increment(1)
             })
