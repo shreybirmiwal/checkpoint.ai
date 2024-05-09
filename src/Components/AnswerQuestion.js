@@ -16,8 +16,12 @@ import { getAuth } from "firebase/auth";
 import { onAuthStateChanged } from "firebase/auth";
 import OpenAI from 'openai';
 import swal from 'sweetalert';
-
+import { FileUploader } from "react-drag-drop-files";
 import { deleteField } from 'firebase/firestore';
+import Loader from 'react-loader';
+
+const fileTypes = ["JPG", "PNG"];
+
 
 function AnswerQuestion() {
 
@@ -39,6 +43,7 @@ function AnswerQuestion() {
     const [ready, setReady] = useState(false)
     const [mistakes, setMistakes] = useState([]);
     const [Accuracy, setAccuracy] = useState(0);
+    const [isLoading, setLoading] = useState(false)
 
     useEffect(() => {
         console.log("TITLE " + title)
@@ -54,6 +59,75 @@ function AnswerQuestion() {
         return unsubscribe;
     }, [auth, navigate]);
 
+
+    // const [files, setFiles] = useState();
+    const uploadImage = (file) => {
+
+        // setFiles(file);
+        // console.log(file)
+
+        submitImages(file);
+    };
+
+
+    const getBase64 = (file) => {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = (error) => reject(error);
+        });
+    }
+
+    const submitImages = async (file) => {
+
+        setLoading(true)
+
+        //use vision gpt
+        const jsonOutput = JSON.stringify({
+            Steps: ["Step 1", "Step 2", "Step 3"],
+            Answer: "Student Final Answer",
+        });
+
+        const promptText = `Given image of a a student's work, extract the steps and answer. Include specific calculations, numbers, and variables solved for at each step. The student may have incorrect work in the picture.
+
+        The Question the student attempted to solve it: ${title}
+        Return in JSON format:
+        ${jsonOutput}
+        `;
+
+        const base64Image = await getBase64(file);
+        console.log("BASE 64  + ", base64Image)
+
+        const response = await client.chat.completions.create({
+            model: "gpt-4-turbo",
+            messages: [
+                {
+                    "role": "user",
+                    "content": [
+                        { "type": "text", "text": promptText },
+                        { type: "image_url", image_url: { url: base64Image } } // Remove "data:image/png;base64," prefix
+                    ],
+                }
+            ],
+            temperature: 0,
+            response_format: { "type": "json_object" },
+            //max_tokens = 300,
+        });
+
+        setLoading(false);
+
+        //set dets
+        const res2 = JSON.parse(response.choices[0].message.content);
+        console.log(res2)
+
+        console.log("Steps:", res2.Steps);
+        console.log("Answer:", res2.Answer);
+
+        setSteps(res2.Steps);
+        setFinalAnswer(res2.Answer);
+
+    }
 
     // const getLoadingData = async () => {
     //     try {
@@ -132,6 +206,19 @@ function AnswerQuestion() {
         }
     };
 
+
+    const jsonOutput = JSON.stringify({
+        details: ["detail_1", "detail_2"]
+    });
+
+    const promt =
+        `[prompt]
+        Return in JSON format:
+        ${jsonOutput}
+        `
+
+
+
     const gptPart = async (prompt) => {
         const assingedRef = doc(db, "Teacher", id);
         const assignedSnap = await getDoc(assingedRef);
@@ -158,20 +245,21 @@ function AnswerQuestion() {
             mistakes: ["STUDENTMISTAKE1", "STUDENTMISTAKE2"]
         });
 
-        const promptText = `Given the question, correct steps, and correct answer, a student's potentially incorrect steps and final answer, determine the student's mistakes. Be very specific in the mistake and include the numbers/calculations that where incorrect. (There may be multiple mistakes or zero mistakes)
+        const promptText =
+            `Given the question, correct steps, and correct answer, a student's potentially incorrect steps and final answer, determine the student's mistakes. Be very specific in the mistake and include the numbers/calculations that where incorrect. (There may be multiple mistakes or zero mistakes)
+       
+        Return in JSON format:
+        ${jsonOutput}
 
-Return in JSON format:
-${jsonOutput}
+        Question: ${correctQuestion}
+        Correct steps:
+        ${formattedCorrectSteps}
 
-Question: ${correctQuestion}
-Correct steps:
-${formattedCorrectSteps}
+        Correct answer:${correctAnswer}
 
-Correct answer:${correctAnswer}
-
-Student steps:
-${formattedStudentSteps}
-Student answer: ${finalAnswer}`;
+        Student steps:
+        ${formattedStudentSteps}
+        Student answer: ${finalAnswer}`;
 
         console.log(promptText);
 
@@ -382,29 +470,41 @@ Student answer: ${finalAnswer}`;
                             <h1> I'm stuck! (hint) </h1>
                         </div>
 
+                        <h1> Upload an image of your work</h1>
+                        <div className='mt-3'>
+                            <FileUploader handleChange={uploadImage} name="file" types={fileTypes} />
+                        </div>
+                        {isLoading && <Loader loading={true} />}
+
+
+
                         <h2 className="text-lg font-semibold mb-2">Steps:</h2>
 
-                        {steps.map((step, index) => (
-                            <div key={index} className="mb-4 flex items-center">
-                                <label className="mr-2">Step {index + 1}:</label>
-                                <input
-                                    type="text"
-                                    className="flex-grow px-3 py-2 border rounded-md focus:outline-none focus:border-blue-500"
-                                    value={step}
-                                    onChange={(e) => {
-                                        const updatedSteps = [...steps];
-                                        updatedSteps[index] = e.target.value;
-                                        setSteps(updatedSteps);
-                                    }}
-                                />
+                        <div className='h-52 m-3 overflow-scroll'>
 
-                                {steps.length > 1 && (
-                                    <button type="button" className="ml-2 text-red-600" onClick={() => handleDeleteStep(index)}>
-                                        Delete Step
-                                    </button>
-                                )}
-                            </div>
-                        ))}
+                            {steps.map((step, index) => (
+                                <div key={index} className="mb-4 flex items-center">
+                                    <label className="mr-2">Step {index + 1}:</label>
+                                    <input
+                                        type="text"
+                                        className="flex-grow px-3 py-2 border rounded-md focus:outline-none focus:border-blue-500"
+                                        value={step}
+                                        onChange={(e) => {
+                                            const updatedSteps = [...steps];
+                                            updatedSteps[index] = e.target.value;
+                                            setSteps(updatedSteps);
+                                        }}
+                                    />
+
+                                    {steps.length > 1 && (
+                                        <button type="button" className="ml-2 text-red-600" onClick={() => handleDeleteStep(index)}>
+                                            Delete Step
+                                        </button>
+                                    )}
+                                </div>
+                            ))}
+
+                        </div>
 
                         <button type="button" className="text-blue-500" onClick={handleAddStep}>
                             Add Step
